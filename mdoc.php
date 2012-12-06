@@ -210,7 +210,7 @@ if ($mode == 'view') {
     }
     $ret = file_put_contents($filename, $content);
     if ($ret !== false) {
-        echo "file $file written";
+        echo "1";
     } else {
         echo "write file $file error";
     }

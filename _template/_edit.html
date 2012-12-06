@@ -15,6 +15,7 @@
     <script type="text/javascript">
       var editor = null;
       var data = '';
+      var saved = false;
       var parseMd = function(data) {
         var sepIndex = data.indexOf('---');
         if (sepIndex < 0) {
@@ -40,7 +41,12 @@
                 type: 'POST',
                 data: {content: data},
               }).done(function(data) {
-                alert(data);
+                if (data == "1") {
+                  saved = true;
+                  document.location = document.location.origin + document.location.pathname;
+                } else {
+                  alert(data);
+                }
               });
             },
           }
@@ -53,6 +59,10 @@
           statusCode: {404: function(){setcontent("");}},
         }).done(setcontent);
       });
+      window.onbeforeunload = function() {
+        if (!saved)
+          return "If you do not save this page, your work will be lost when you leave.";
+      }
     </script>
   </body>
 </html>
