@@ -1,6 +1,7 @@
 <?php
 require_once(dirname(__FILE__) . '/lib/mymarkdown.php');
 require_once(dirname(__FILE__) . '/lib/Spyc.php');
+$mdoc_config = include(dirname(__FILE__) . '/config.php');
 
 function parseMarkdown($md) {
     $parser = new MyMarkdown();
@@ -36,6 +37,7 @@ function applyTemplate($template, $data) {
 }
 
 function generate($file, $data) {
+    global $mdoc_config;
     $contents = file_get_contents($file);
     $arr = explode("\n---\n", $contents, 2);
     if (count($arr) < 2) {
@@ -50,6 +52,7 @@ function generate($file, $data) {
     $data['title'] = $yaml['title'];
     $data['author'] = $yaml['author'];
     $data['toc'] = $result['toc'];
+    $data['site_name'] = $mdoc_config['site_name'];
 
     $generated = applyTemplate($yaml['layout'], $data);
     return $generated;
@@ -59,6 +62,7 @@ function sort_cb($a, $b) {
     return $b['mtime'] - $a['mtime'];
 }
 function generateIndex($linkdir) {
+    global $mdoc_config;
     var_dump($linkdir);
     $linkdir = trim($linkdir, '/');
     $dir = "_doc/$linkdir";
@@ -104,6 +108,7 @@ function generateIndex($linkdir) {
     $data['title'] = $linkdir;
     $data['author'] = '';
     $data['toc'] = $result['toc'];
+    $data['site_name'] = $mdoc_config['site_name'];
     return applyTemplate("default", $data);
 }
 
