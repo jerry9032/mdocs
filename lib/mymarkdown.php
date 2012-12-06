@@ -3,6 +3,9 @@ require_once(dirname(__FILE__) . '/markdown-geshi.php');
 class MyMarkdown extends MarkdownGeshi_Parser {
     protected $_toc = array();
     protected $_toc_id = 1;
+    function set_title($title) {
+        array_unshift($this->_toc, array(1, $title, 0));
+    }
 	function _doHeaders_callback_setext($matches) {
 		# Terrible hack to check we haven't found an empty list item.
 		if ($matches[2] == '-' && preg_match('{^-(?: |$)}', $matches[1]))

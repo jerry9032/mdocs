@@ -3,8 +3,11 @@ require_once(dirname(__FILE__) . '/lib/mymarkdown.php');
 require_once(dirname(__FILE__) . '/lib/Spyc.php');
 $mdoc_config = include(dirname(__FILE__) . '/config.php');
 
-function parseMarkdown($md) {
+function parseMarkdown($md, $title = null) {
     $parser = new MyMarkdown();
+    if (!empty($title)) {
+        $parser->set_title($title);
+    }
     $html = $parser->transform($md);
     $toc = $parser->getToc();
     return array('html' => $html, 'toc' => $toc);
@@ -46,7 +49,7 @@ function generate($file, $data) {
     $yaml = $arr[0];
     $md = $arr[1];
     $yaml = spyc_load($yaml);
-    $result = parseMarkdown($md);
+    $result = parseMarkdown($md, $yaml['title']);
 
     $data['content'] = $result['html'];
     $data['title'] = $yaml['title'];
