@@ -146,7 +146,7 @@
   // Grabs the text from an element and preserves whitespace
   function _getText(el) {
     var theText;
-    if (document.body.innerText) {
+    if (el.innerText) {
       theText = el.innerText;
     }
     else {
