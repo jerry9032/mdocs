@@ -87,8 +87,9 @@
             }
           })
         });
+        $html_body = $('html, body');
         $('.bs-docs-sidebar a').click(function(){
-            $('html, body').animate({
+            $html_body.animate({
                 scrollTop: $( $(this).attr('href') ).offset().top - 45
             }, 500);
             return false;
