@@ -8,9 +8,9 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet">
-    <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="http://twitter.github.com/bootstrap/assets/css/docs.css" rel="stylesheet">
+    <link href="/_static/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="/_static/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="/_static/bootstrap/css/docs.css" rel="stylesheet">
     <style type="text/css">
       .contents h2 {
         padding-bottom: 9px;
@@ -49,29 +49,33 @@
         </div>
       </div>
     </div>
-  <header class="jumbotron subhead" id="overview">
+    <header class="jumbotron subhead" id="overview">
+      <div class="container">
+        <h1>{$title}</h1>
+        <p class="lead"></p>
+      </div>
+    </header>
+
     <div class="container">
-      <h1>{$title}</h1>
-      <p class="lead"></p>
-    </div>
-  </header>
-
-  <div class="container">
-    <div class="row">
-      <div id="faketoc" style="display: none">
-        {$toc}
-      </div>
-      <div class="span3 bs-docs-sidebar">
-      </div>
-      <div class="span9 contents">
-        {$content}
+      <div class="row">
+        <div id="faketoc" style="display: none">
+          {$toc}
+        </div>
+        <div class="span3 bs-docs-sidebar">
+        </div>
+        <div class="span9 contents">
+          {$content}
+        </div>
       </div>
     </div>
-
-  </div>
 
     <footer class="footer">
-        <p class="pull-right"><a href="#">Back to top</a></p>
+      <div class="row"><p class="pull-right"><a href="#">Back to top</a></p></div>
+      <div class="container">
+        <p>Designed and built with all the love in the world by <a href="http://twitter.com/mdo" target="_blank">@mdo</a> and <a href="http://twitter.com/fat" target="_blank">@fat</a>.</p>
+        <p>Modified by Lau Ching Jun.</p>
+        <p>Powered by Mdoc.</p>
+      </div>
     </footer>
 
 
