@@ -4,10 +4,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>{{{TITLE}}}</title>
+    <title>{$title} | {$site_name}</title>
     <link rel="stylesheet" href="/_static/basic.css" type="text/css" />
-    <!--<link rel="stylesheet" href="_static/pygments.css" type="text/css" />-->
-    <link rel="top" title="{{{SITE_NAME}}}" href="#" /> 
+    <link rel="top" title="{$site_name}" href="#" /> 
   </head>
   <body>
     <div class="relbar-top">
@@ -18,7 +17,7 @@
         <li class="right" style="margin-right: 10px">
           <!--<a href="genindex.html" title="General Index"
              accesskey="I">index</a>--></li>
-    <li><a href="/">{{{SITE_NAME}}}</a> &raquo; </li>
+    <li><a href="{$main_url}">{$site_name}</a> &raquo; </li>
  
       </ul>
     </div>
@@ -29,19 +28,19 @@
       <div class="documentwrapper">
         <div class="bodywrapper">
           <div class="body">
-            <h1>{{{TITLE}}}</h1>
-{{{CONTENT}}}            
+            <h1>{$title}</h1>
+            {$content}
           </div>
         </div>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="#">Table Of Contents</a></h3>
-{{{TOC}}}
+          <h3><a href="#">Table Of Contents</a></h3>
+            {$toc}
       <h3>This Page</h3>
       <ul class="this-page-menu">
-          <li><a href="{{{SOURCE_LINK}}}" rel="nofollow">Show Source</a></li>
-          <li><a href="?edit=1" rel="nofollow">Edit page</a></li>
+          <li><a href="{$source_link}" rel="nofollow">Show Source</a></li>
+          <li><a href="{$edit_link}" rel="nofollow">Edit page</a></li>
       </ul>
         </div>
       </div>
@@ -55,14 +54,14 @@
         <li class="right" style="margin-right: 10px">
           <!--<a href="genindex.html" title="General Index"
              accesskey="I">index</a>--></li>
-    <li><a href="/">{{{SITE_NAME}}}</a> &raquo; </li>
+    <li><a href="{$main_url}">{$site_name}</a> &raquo; </li>
  
       </ul>
     </div>
     </div>
 
     <div class="footer">
-        created by Lau Ching Jun
+        Created by Lau Ching Jun. Powered by Mdoc.
     </div>
   </body>
 </html>

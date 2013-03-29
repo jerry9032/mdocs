@@ -2,6 +2,13 @@
 require_once(dirname(__FILE__) . '/lib/mymarkdown.php');
 require_once(dirname(__FILE__) . '/lib/Spyc.php');
 $mdoc_config = include(dirname(__FILE__) . '/config.php');
+$default_config = array(
+    'site_name' => 'Mdoc documentation',
+    'short_name' => 'Mdoc',
+    'main_url' => '/',
+    'edit_link' => '?edit=1',
+);
+$mdoc_config = array_merge($default_config, $mdoc_config);
 
 function parseMarkdown($md, $title = null) {
     $parser = new MyMarkdown();
@@ -13,30 +20,22 @@ function parseMarkdown($md, $title = null) {
     return array('html' => $html, 'toc' => $toc);
 }
 
-$_template_data = NULL;
-
-function _tmpl_cb($matches) {
-    global $_template_data;
-    $key = strtolower($matches[1]);
-    if (isset($_template_data[$key]))
-        return $_template_data[$key];
-    else
-        return null;
-}
-
 function applyTemplate($template, $data) {
-    global $_template_data;
+    require_once(dirname(__FILE__) . '/lib/smarty/Smarty.class.php');
+    $smarty = new Smarty();
+    $smarty->setTemplateDir(dirname(__FILE__).'/_template');
+    $smarty->setCompileDir(dirname(__FILE__).'/_tmp/templates_c');
+    $smarty->setCacheDir(dirname(__FILE__).'/_tmp/cache');
+    $smarty->setConfigDir(dirname(__FILE__).'/_tmp/config');
+
     if ($template == NULL) {
         $template = 'default.html';
     } else {
         $template = "$template.html";
     }
-    $tmpl = file_get_contents('_template/' . $template);
-    if ($tmpl === false) return false;
-    $_template_data = $data;
-    $retval = preg_replace_callback('/{{{([^}]*)}}}/', '_tmpl_cb',  $tmpl);
-    $_template_data = NULL;
-    return $retval;
+
+    $smarty->assign($data);
+    return $smarty->fetch($template);
 }
 
 function generate($file, $data) {
@@ -51,11 +50,13 @@ function generate($file, $data) {
     $yaml = spyc_load($yaml);
     $result = parseMarkdown($md, $yaml['title']);
 
+    $data = $yaml;
+
     $data['content'] = $result['html'];
-    $data['title'] = $yaml['title'];
-    $data['author'] = $yaml['author'];
     $data['toc'] = $result['toc'];
-    $data['site_name'] = $mdoc_config['site_name'];
+
+    $data = array_merge($mdoc_config, $data);
+    //$data['site_name'] = $mdoc_config['site_name'];
 
     $generated = applyTemplate($yaml['layout'], $data);
     return $generated;

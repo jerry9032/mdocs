@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>{{{TITLE}}}</title>
+    <title>{$title} | {$site_name}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -32,12 +32,18 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="brand" href="./">ORP</a>
+          <a class="brand" href="{$main_url}">{$short_name}</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-              <li class="">
-                <a href="./">Home</a>
-              </li>
+              {foreach $nav as $key=>$url}
+                  <li class="">
+                    <a href="{$url}">{$key}</a>
+                  </li>
+              {foreachelse}
+                  <li class="">
+                    <a href="{$main_url}">Home</a>
+                  </li>
+              {/foreach}
             </ul>
           </div>
         </div>
@@ -45,7 +51,7 @@
     </div>
   <header class="jumbotron subhead" id="overview">
     <div class="container">
-      <h1>{{{TITLE}}}</h1>
+      <h1>{$title}</h1>
       <p class="lead"></p>
     </div>
   </header>
@@ -53,12 +59,12 @@
   <div class="container">
     <div class="row">
       <div id="faketoc" style="display: none">
-        {{{TOC}}}
+        {$toc}
       </div>
       <div class="span3 bs-docs-sidebar">
       </div>
       <div class="span9 contents">
-        {{{CONTENT}}}
+        {$content}
       </div>
     </div>
 
