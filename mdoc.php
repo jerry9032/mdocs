@@ -38,9 +38,8 @@ function applyTemplate($template, $data) {
     return $smarty->fetch($template);
 }
 
-function generate($file, $data) {
+function generate($contents, $data) {
     global $mdoc_config;
-    $contents = file_get_contents($file);
     $arr = explode("\n---\n", $contents, 2);
     if (count($arr) < 2) {
         return false;
@@ -56,7 +55,6 @@ function generate($file, $data) {
     $data['toc'] = $result['toc'];
 
     $data = array_merge($mdoc_config, $data);
-    //$data['site_name'] = $mdoc_config['site_name'];
 
     $generated = applyTemplate($yaml['layout'], $data);
     return $generated;
@@ -95,7 +93,7 @@ function generateIndex($linkdir) {
     usort($files, 'sort_cb');
 
     //generate md from dirlist
-    $md = "# 目录\n## 文章列表\n";
+    $md = "title: $linkdir 目录\n---\n## 文章列表\n";
     if (!empty($linkdir)) {
         $linkdir = '/' . $linkdir;
     }
@@ -105,15 +103,7 @@ function generateIndex($linkdir) {
     
 
     //generate page
-    $result = parseMarkdown($md);
-    $html = $result['html'];
-    $data['source_link'] = '#';
-    $data['content'] = $result['html'];
-    $data['title'] = $linkdir;
-    $data['author'] = '';
-    $data['toc'] = $result['toc'];
-    $data['site_name'] = $mdoc_config['site_name'];
-    return applyTemplate("default", $data);
+    return generate($md, array('source_link' => '#'));
 }
 
 function sendfile($file, $type = "http") {
@@ -140,7 +130,7 @@ function returnCachedFile($file) {
             mkdir(dirname($cache), 0755, true);
         }
         $data = array('source_link' => $file);
-        file_put_contents("$cache.$rand", generate($ori, $data));
+        file_put_contents("$cache.$rand", generate(file_get_contents($ori), $data));
         rename("$cache.$rand", "$cache");
     }
     sendfile($cache);
