@@ -58,6 +58,7 @@
         $.ajax({
           url: document.location.origin+document.location.pathname + ".md",
           statusCode: {404: function(){setcontent("");}},
+          cache: false,
         }).done(setcontent);
       });
       window.onbeforeunload = function() {
