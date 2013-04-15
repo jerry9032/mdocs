@@ -1,0 +1,61 @@
+<?php
+$_git_flock_fp = NULL;
+function _git_after_save_edit($file) {
+    global $_git_flock_fp;
+    if (!is_dir('_doc/.git')) {
+        return;
+    }
+    file_put_contents('aaaaa', $file);
+    $file = substr($file, 5);
+    $retcode = 0;
+    $output = array();
+    $f = escapeshellarg($file);
+    exec("cd _doc \\
+        && git checkout -B tmpbranch \\
+        && git add $f \\
+        && git commit -m 'Modify file '$file \\
+        && git checkout master \\
+        && git fetch \\
+        && git reset --hard origin/master \\
+        && git checkout tmpbranch \\
+        && git rebase master \\
+        && git checkout master \\
+        && git merge tmpbranch \\
+        && git branch -d tmpbranch \\
+        && git push origin master
+        ", $output, $retcode);
+    if ($retcode != 0) {
+        exec("cd _doc && git rebase --abort");
+        exec("cd _doc && git checkout master && git reset --hard");
+        echo "Commit to git failed, maybe conflict\n";
+        flock($_git_flock_fp, LOCK_UN);
+        return ACTION_ABORT;
+    }
+    flock($_git_flock_fp, LOCK_UN);
+}
+
+function _git_before_save_edit() {
+    global $_git_flock_fp;
+    if (!is_dir('_doc/.git')) {
+        return;
+    }
+    $_git_flock_fp = fopen('_doc/.git/config', 'r');
+    $ret = flock($_git_flock_fp, LOCK_EX);
+    if (!$ret) {
+        echo "Failed to acquire lock]\n";
+        return ACTION_ABORT;
+    }
+}
+
+function _git_sync() {
+    if (!is_dir('_doc/.git')) {
+        return;
+    }
+    exec("cd _doc && git fetch && git reset --hard origin/master");
+}
+
+add_action('after_save_edit', '_git_after_save_edit');
+add_action('before_save_edit', '_git_before_save_edit');
+add_action('before_view', '_git_sync');
+add_action('before_edit', '_git_sync');
+add_action('before_commit', '_git_sync');
