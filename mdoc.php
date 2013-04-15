@@ -1,14 +1,67 @@
 <?php
 require_once(dirname(__FILE__) . '/lib/mymarkdown.php');
 require_once(dirname(__FILE__) . '/lib/Spyc.php');
+
+// support for hooks
+$_action_callbacks = array();
+$_filter_callbacks = array();
+define('ACTION_ABORT', '___ACTION__ABORT___');
+function action_hook($name, $data = NULL) {
+    global $_action_callbacks;
+    if (isset($_action_callbacks[$name])) {
+        foreach($_action_callbacks[$name] as $cb) {
+            $ret = $cb($data);
+            if ($ret === ACTION_ABORT) return false;
+        }
+    }
+    return true;
+}
+
+function filter_hook($name, $data) {
+    global $_filter_callbacks;
+    if (isset($_filter_callbacks[$name])) {
+        foreach($_filter_callbacks[$name] as $cb) {
+            $data = $cb($data);
+        }
+    }
+    return $data;
+}
+
+function add_action($name, $cb) {
+    global $_action_callbacks;
+    if (!isset($_action_callbacks[$name])) {
+        $_action_callbacks[$name] = array($cb);
+    } else {
+        $_action_callbacks[$name][] = $cb;
+    }
+}
+
+function add_filter($name, $cb) {
+    global $_filter_callbacks;
+    if (!isset($_filter_callbacks[$name])) {
+        $_filter_callbacks[$name] = array($cb);
+    } else {
+        $_filter_callbacks[$name][] = $cb;
+    }
+}
+// end support for hooks
+
 $mdoc_config = include(dirname(__FILE__) . '/config.php');
 $default_config = array(
     'site_name' => 'Mdoc documentation',
     'short_name' => 'Mdoc',
     'main_url' => '/',
     'edit_link' => '?edit=1',
+    'plugins' => array(),
 );
 $mdoc_config = array_merge($default_config, $mdoc_config);
+
+function loadPlugins() {
+    global $mdoc_config;
+    foreach ($mdoc_config['plugins'] as $p) {
+        require_once(dirname(__FILE__) . "/_plugins/$p.php");
+    }
+}
 
 function parseMarkdown($md, $title = null) {
     $parser = new MyMarkdown();
@@ -168,6 +221,8 @@ function returnCachedIndex($dir) {
     sendfile($cache);
 }
 
+loadPlugins();
+
 $file = $_GET['path'];
 if ($_GET['post'] == 1) {
     $mode = 'post';
@@ -178,6 +233,9 @@ if ($_GET['post'] == 1) {
 }
 
 if ($mode == 'view') {
+    if (!action_hook('before view', $file)) {
+        exit(1);
+    }
     if (is_file("_doc/$file.md")) {
         returnCachedFile("$file.md");
     } else if (is_file("_doc/$file")) {
@@ -194,10 +252,19 @@ if ($mode == 'view') {
     }
 } else if ($mode == 'edit') {
     //edit mode
+    if (!action_hook('before_edit', $file)) {
+        header('Status: 403 Forbidden');
+        exit(1);
+    }
     sendfile("_template/_edit.html");
 } else if ($mode == 'post') {
     //verify contents
+    if (!action_hook('before_commit')) {
+        header('Status: 403 Forbidden');
+        exit(1);
+    }
     $content = $_POST['content'];
+    $content = filter_hook('contents_before_save_edit', $content);
     if (empty($content)) {
         echo 'content empty!';
         exit();
@@ -207,10 +274,19 @@ if ($mode == 'view') {
     if (!is_dir($dirname)) {
         mkdir($dirname, 0755, true);
     }
+    if (!action_hook('before_save_edit', $filename)) {
+        echo "hook failed";
+        exit();
+    }
     $ret = file_put_contents($filename, $content);
-    if ($ret !== false) {
-        echo "1";
-    } else {
+    if ($ret === false) {
         echo "write file $file error";
+        exit();
+    }
+    if (!action_hook('after_save_edit', $filename)) {
+        echo "hook failed, but file might have been modified\n";
+        echo "backup your data and try editting again";
+    } else {
+        echo 1;
     }
 }
