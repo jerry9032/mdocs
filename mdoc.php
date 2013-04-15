@@ -100,12 +100,15 @@ function applyTemplate($template, $data) {
     $smarty->setCacheDir(dirname(__FILE__).'/_tmp/cache');
     $smarty->setConfigDir(dirname(__FILE__).'/_tmp/config');
 
+    $template = filter_hook('template', $template);
+
     if ($template == NULL) {
         $template = 'default.html';
     } else {
         $template = "$template.html";
     }
 
+    $data = filter_hook('template_data', $data);
     $smarty->assign($data);
     return $smarty->fetch($template);
 }

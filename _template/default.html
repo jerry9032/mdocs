@@ -37,6 +37,15 @@
             <li><a href="{$source_link}" rel="nofollow">Show Source</a></li>
             <li><a href="{$edit_link}" rel="nofollow">Edit page</a></li>
           </ul>
+          {if isset($search)}
+            <div id="searchbox" style="">
+              <h3>Search</h3>
+                <form class="search" action="{$search.link}" method="get">
+                  <input type="text" name="{$search.query}" size="18">
+                  <input type="submit" value="Go">
+                </form>
+            </div>
+          {/if}
         </div>
       </div>
       <div class="clearer"></div>
