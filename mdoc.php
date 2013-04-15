@@ -264,7 +264,7 @@ if ($mode == 'view') {
     if (!action_hook('before view', $file)) {
         exit(1);
     }
-    if (is_file("_doc/$file.md")) {
+    if (preg_replace('#.*/#', '', $file) != '' && is_file("_doc/$file.md")) {
         returnCachedFile("$file.md");
     } else if (is_file("_doc/$file")) {
         sendfile("_doc/$file", 'text');
