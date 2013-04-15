@@ -10,6 +10,9 @@ function _git_after_save_edit($file) {
     $retcode = 0;
     $output = array();
     $f = escapeshellarg($file);
+    if (trim(shell_exec("cd _doc && git status --porcelain $f | wc -l")) === "0") {
+        return;
+    }
     exec("cd _doc \\
         && git checkout -B tmpbranch \\
         && git add $f \\
