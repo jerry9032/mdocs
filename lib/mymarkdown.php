@@ -13,18 +13,20 @@ class MyMarkdown extends MarkdownGeshi_Parser {
 		
 		$level = $matches[2]{0} == '=' ? 1 : 2;
         $text = $this->runSpanGamut($matches[1]);
+        $clean_text = strip_tags($this->unhash($text));
         $id = $this->_toc_id++;
 		$block = "<h$level id=\"$id\">".$text."</h$level>";
 
-        $this->_toc[] = array($level, $text, $id);
+        $this->_toc[] = array($level, $clean_text, $id);
 		return "\n" . $this->hashBlock($block) . "\n\n";
 	}
 	function _doHeaders_callback_atx($matches) {
 		$level = strlen($matches[1]);
         $text = $this->runSpanGamut($matches[2]);
+        $clean_text = strip_tags($this->unhash($text));
         $id = $this->_toc_id++;
 		$block = "<h$level id=\"$id\">".$text."</h$level>";
-        $this->_toc[] = array($level, $text, $id);
+        $this->_toc[] = array($level, $clean_text, $id);
 		return "\n" . $this->hashBlock($block) . "\n\n";
 	}
 
