@@ -46,6 +46,25 @@ function add_filter($name, $cb) {
 }
 // end support for hooks
 
+// support for special page
+$_special_pages = array();
+function invoke_special($method) {
+    global $_special_pages;
+    if (isset($_special_pages[$method])) {
+        $cb = $_special_pages[$method][0];
+        $cb();
+    } else {
+        header('Status: 404 Not found');
+        exit();
+    }
+}
+
+function register_special($method, $cb, $description = NULL) {
+    global $_special_pages;
+    $_special_pages[$method] = array($cb, $description);
+}
+// end support for special page
+
 $mdoc_config = include(dirname(__FILE__) . '/config.php');
 $default_config = array(
     'site_name' => 'Mdoc documentation',
@@ -224,6 +243,12 @@ function returnCachedIndex($dir) {
 loadPlugins();
 
 $file = $_GET['path'];
+if (strpos($file, "special:") === 0) {
+    // use special page
+    $method = substr($file, strlen("special:"));
+    invoke_special($method);
+    exit();
+}
 if ($_GET['post'] == 1) {
     $mode = 'post';
 } else if ($_GET['edit'] == 1) {
