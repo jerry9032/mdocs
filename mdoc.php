@@ -66,14 +66,30 @@ function register_special($method, $cb, $description = NULL) {
 // end support for special page
 
 $mdoc_config = include(dirname(__FILE__) . '/config.php');
-$default_config = array(
-    'site_name' => 'Mdoc documentation',
-    'short_name' => 'Mdoc',
-    'main_url' => '/',
-    'edit_link' => '?edit=1',
-    'plugins' => array(),
-);
-$mdoc_config = array_merge($default_config, $mdoc_config);
+loadConfig();
+
+function loadConfig() {
+    global $mdoc_config;
+    $default_config = array(
+        'site_name' => 'Mdoc documentation',
+        'short_name' => 'Mdoc',
+        'main_url' => '/',
+        'edit_link' => '?edit=1',
+        'plugins' => array(),
+    );
+    $mdoc_config = array_merge($default_config, $mdoc_config);
+
+    $file = $_GET['path'];
+    $dir_parts = explode('/', $file);
+    $prefix = '_doc/';
+    foreach ($dir_parts as $part) {
+        $prefix .= $part . '/';
+        $path = $prefix . 'config.php';
+        if (file_exists($path)) {
+            $mdoc_config = array_merge($mdoc_config, include($path));
+        }
+    }
+}
 
 function loadPlugins() {
     global $mdoc_config;
@@ -131,7 +147,7 @@ function generate($contents, $data) {
 
     $data = array_merge($mdoc_config, $data);
 
-    $generated = applyTemplate($yaml['layout'], $data);
+    $generated = applyTemplate($data['layout'], $data);
     return $generated;
 }
 
@@ -176,7 +192,6 @@ function generateIndex($linkdir) {
         $md .= "* [{$f['title']}]($linkdir/{$f['name']}) _last updated by **{$f['author']}** on ".strftime("%Y-%m-%d %H:%M",$f['mtime'])."_\n";
     }
     
-
     //generate page
     return generate($md, array('source_link' => '#'));
 }
@@ -189,10 +204,14 @@ function sendfile($file, $type = "http") {
 }
 
 function returnCachedFile($file) {
+    global $mdoc_config;
+
     $cache = "_cache/" . str_replace("/", ",.,.", trim($file, '/'));
     $ori = "_doc/$file";
     $need_build = true;
-    if (file_exists($cache)) {
+    if (isset($mdoc_config['disable_cache']) && $mdoc_config['disable_cache']) {
+        $need_build = true;
+    } else if (file_exists($cache)) {
         $oristat = stat($ori);
         $cachestat = stat($cache);
         if ($oristat['mtime'] < $cachestat['mtime']) {
@@ -243,6 +262,10 @@ function returnCachedIndex($dir) {
     sendfile($cache);
 }
 
+function fixName($file) {
+    return str_replace('/.md', '/index.md', $file);
+}
+
 loadPlugins();
 
 $file = $_GET['path'];
@@ -264,11 +287,17 @@ if ($mode == 'view') {
     if (!action_hook('before view', $file)) {
         exit(1);
     }
-    if (preg_replace('#.*/#', '', $file) != '' && is_file("_doc/$file.md")) {
-        returnCachedFile("$file.md");
-    } else if (is_file("_doc/$file")) {
+    if (is_file("_doc/$file")) {
         sendfile("_doc/$file", 'text');
+    } else if (is_file(fixName("_doc/$file"))) {
+        sendfile(fixName("_doc/$file"), 'text');
+    } else if (is_file("_doc/$file.md")) {
+        returnCachedFile("$file.md");
     } else if (is_dir("_doc/$file")) {
+        if ($file[strlen($file)-1] != '/') {
+            header("Location: /$file/", true, 302);
+            exit;
+        }
         if (is_file("_doc/$file/index.md")) {
             returnCachedFile("$file/index.md");
         } else {
@@ -297,7 +326,7 @@ if ($mode == 'view') {
         echo 'content empty!';
         exit();
     }
-    $filename = "_doc/$file.md";
+    $filename = fixName("_doc/$file.md");
     $dirname = dirname($filename);
     if (!is_dir($dirname)) {
         mkdir($dirname, 0755, true);
