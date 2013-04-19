@@ -1,4 +1,6 @@
 *~
+*.swp
+*.swo
 _doc
 _cache
 _tmp
