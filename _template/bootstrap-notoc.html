@@ -79,6 +79,7 @@
         $('#faketoc > ul > li > ul > li > ul').remove();
         $('#faketoc > ul > li > ul').appendTo('.bs-docs-sidebar');
         $(".bs-docs-sidebar > ul").addClass("nav nav-list bs-docs-sidenav");
+        $("table").addClass("table table-striped");
         $(function(){
           $window = $(window);
           $('.bs-docs-sidenav').affix({
