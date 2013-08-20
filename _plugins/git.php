@@ -14,23 +14,34 @@ function _git_after_save_edit($file) {
     if (trim(shell_exec("cd _doc && $git status --porcelain $f | wc -l")) === "0") {
         return;
     }
+    #exec("cd _doc \\
+    #   && $git checkout -B tmpbranch \\
+    #   && $git add $f \\
+    #   && $git commit -m 'Modify file '$file \\
+    #   && $git checkout master \\
+    #   && $git fetch \\
+    #   && $git reset --hard origin/master \\
+    #   && $git checkout tmpbranch \\
+    #   && $git rebase master \\
+    #   && $git checkout master \\
+    #   && $git merge tmpbranch \\
+    #   && $git branch -d tmpbranch \\
+    #   && $git push origin master
+    #   ", $output, $retcode);
     exec("cd _doc \\
-        && $git checkout -B tmpbranch \\
-        && $git add $f \\
-        && $git commit -m 'Modify file '$file \\
-        && $git checkout master \\
-        && $git fetch \\
-        && $git checkout tmpbranch \\
-        && $git rebase master \\
-        && $git checkout master \\
-        && $git merge tmpbranch \\
-        && $git branch -d tmpbranch \\
-        && $git push origin master
-        ", $output, $retcode);
-    #&& $git reset --hard origin/master \\ # after fetch
+       && $git checkout -B tmpbranch \\
+       && $git add $f \\
+       && $git commit -m 'Modify file '$file \\
+       && $git checkout master \\
+       && $git fetch \\
+       && $git merge tmpbranch \\
+       && $git branch -d tmpbranch \\
+       && $git push origin master
+       ", $output, $retcode);
     if ($retcode != 0) {
-        exec("cd _doc && $git rebase --abort");
-        exec("cd _doc && $git checkout master && $git reset --hard");
+        #exec("cd _doc && $git rebase --abort");
+        #exec("cd _doc && $git checkout master && $git reset --hard");
+        exec("cd _doc && $git checkout master");
         echo "Commit to git failed, maybe conflict\n";
         flock($_git_flock_fp, LOCK_UN);
         return ACTION_ABORT;
@@ -57,8 +68,8 @@ function _git_sync() {
     if (!is_dir('_doc/.git')) {
         return;
     }
-    exec("cd _doc && $git fetch");
     #exec("cd _doc && $git fetch && $git reset --hard origin/master");
+    exec("cd _doc && $git fetch");
 }
 
 add_action('after_save_edit', '_git_after_save_edit');
