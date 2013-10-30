@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="">
+
+<title>{$info.module} | 百度手册</title>
+
+<!-- Bootstrap core CSS -->
+<link href="/_static/bootstrap3/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Documentation extras -->
+<link href="/_static/bootstrap3/css/docs.css" rel="stylesheet">
+<link href="/_static/bootstrap3/css/github.css" rel="stylesheet">
+<style>
+
+</style>
+<!--[if lt IE 9]><script src="../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+  <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+<![endif]-->
+
+<style id="holderjs-style" type="text/css"></style></head>
+<body>
+<a class="sr-only" href="#content">Skip to main content</a>
+
+<!-- Docs master nav -->
+<header class="navbar navbar-inverse navbar-fixed-top bs-docs-nav" role="banner">
+  <div class="container">
+    <div class="navbar-header">
+      <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="/" class="navbar-brand">百度手册</a>
+    </div>
+    <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+          <a data-toggle="dropdown" href="#">常用文档<b class="caret" style="color: #777; border-top-color: #777; border-bottom-color: #777;"></b></a>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+            <li><a href="#">Redis</a></li>
+            <li><a href="#">ODP</a></li>
+            <li class="divider"></li>
+            <li><a href="#">Confilter</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#">如何编辑</a>
+        </li>
+        <li class="navbar-right search" style="width: 200px">
+          <div class="input-group" style="width: 150px">  
+            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>  
+            <input type="text" class="form-control" placeholder="模块名">
+          </div>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<div class="bs-header" id="content">
+  <div class="container">
+    <h1>{$info.module}</h1>
+    <p>{$info.intro}</p>
+  </div>
+</div>
+
+<div class="container bs-docs-container">
+  <div class="row">
+    <div class="col-md-3">
+      <div class="bs-sidebar hidden-print" role="complementary">
+        <ul class="nav bs-sidenav">
+
+          {$i=0}
+          {foreach $nav as $title => $sub_array}
+            {$i=$i+1}
+            <li>
+            {if is_array($sub_array)}
+              <a href="#{$i}">{$title}</a>
+              <ul class="nav">
+                {$j=0}
+                {foreach $sub_array as $sub_title => $sub_file}
+                  {$j=$j+1}
+                  <li>
+                    <a href="#{$i}_{$j}" file="/{$source_link}/{$file}{$edit_link}">{$sub_title}</a>
+                  </li>
+                {/foreach}
+              </ul>
+            {else}
+              {$file=$sub_array}
+              <a href="#{$i}" file="/{$source_link}/{$file}{$edit_link}">{$title}</a>
+            {/if}
+            </li>
+          {/foreach}
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-9" role="main">
+      
+    {$i=0}
+    {foreach $contents as $title => $sub_array}
+      {$i=$i+1}
+      <div class="bs-docs-section">
+      {if is_array($sub_array)}
+        <div class="page-header">
+          <h1 id="{$i}">{$title}</h1>
+        </div>
+        {$j=0}
+        {foreach $sub_array as $sub_title => $sub_body}
+          {$j=$j+1}
+          <h2 id="{$i}_{$j}">{$sub_title}
+            <a class="btn btn-edit btn-primary pull-right">
+              <span class="glyphicon glyphicon-edit"></span> 编辑本段
+            </a>
+          </h2>
+          {$sub_body}
+        {/foreach}
+      {else}
+        <div class="page-header">
+          <h1 id="{$i}">{$title}
+            <a class="btn btn-edit btn-primary pull-right">
+              <span class="glyphicon glyphicon-edit"></span> 编辑本段
+            </a>
+          </h1> 
+        </div>
+        {$body=$sub_array}
+        {$body}
+      {/if}
+      </div>
+    {/foreach}
+
+    </div>
+  </div>
+</div>
+
+
+<footer class="bs-footer" role="contentinfo">
+  <div class="container">
+
+    <p>Designed and built with all the love in the world by <a href="http://twitter.com/mdo" target="_blank">@mdo</a> and <a href="http://twitter.com/fat" target="_blank">@fat</a>.</p>
+    <p>Code licensed under <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache License v2.0</a>, documentation under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
+    <ul class="footer-links">
+      <li>当前版本： v3.0.0</li>
+      <li class="muted">·</li>
+      <li><a href="http://v2.bootcss.com/">Bootstrap 2.3.2 文档</a></li>
+      <li class="muted">·</li>
+      <li><a href="http://blog.getbootstrap.com">Blog</a></li>
+      <li class="muted">·</li>
+      <li><a href="https://github.com/twbs/bootstrap/issues?state=open">Issues</a></li>
+      <li class="muted">·</li>
+      <li><a href="https://github.com/twbs/bootstrap/releases">Releases</a></li>
+    </ul>
+  </div>
+</footer>
+
+    <!-- JS and analytics only. -->
+    <!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="/_static/bootstrap3/js/jquery-1.10.2.min.js"></script>
+<script src="/_static/bootstrap3/js/bootstrap.js"></script>
+
+
+<script src="/_static/bootstrap3/js/holder.js"></script>
+<script src="/_static/bootstrap3/js/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script src="/_static/bootstrap3/js/application.js"></script>
+
+
+</body></html>

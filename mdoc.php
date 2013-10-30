@@ -1,5 +1,6 @@
 <?php
 require_once(dirname(__FILE__) . '/lib/mymarkdown.php');
+require_once(dirname(__FILE__) . '/lib/manmarkdown.php');
 require_once(dirname(__FILE__) . '/lib/Spyc.php');
 
 // support for hooks
@@ -230,6 +231,51 @@ function returnCachedFile($file) {
     sendfile($cache);
 }
 
+// input config.php merge files
+function generateMergedFile($module_config_file, $scm_path) {
+    global $mdoc_config;
+
+    $parser = new ManMarkdown();
+    $module_config = include $module_config_file;
+    foreach ($module_config["nav"] as $title => $file) {
+        if ( is_array($file) ) {
+            $sub_array = $file;
+            foreach ($sub_array as $sub_title => $sub_file) {
+                $ctx = file_get_contents(dirname($module_config_file)."/".$sub_file.".md");
+                $arr = explode("\n---\n", $ctx, 2);
+                $md = $arr[1];
+                $contents[$title][$sub_title] = $parser->transform($md);
+            }
+        } else {
+            $ctx = file_get_contents(dirname($module_config_file)."/".$file.".md");
+            $arr = explode("\n---\n", $ctx, 2);
+            $md = $arr[1];
+            $contents[$title] = $parser->transform($md);
+        }
+    }
+    $data = array_merge($mdoc_config, $module_config, array(
+        "source_link" => $scm_path,
+        "contents" => $contents
+    ));
+    $generated = applyTemplate($module_config['layout'], $data);
+    return $generated;
+}
+
+function returnMergedFile($scm_path) {
+    global $mdoc_config;
+
+    $cache = "_cache/" . str_replace("/", ",.,.", trim($scm_path, '/'));
+    $ori = "_doc/$scm_path/config.md";
+
+    echo generateMergedFile($ori, $scm_path); exit();
+
+    $rand = rand();
+    file_put_contents("$cache.$rand", generateMergedFile($ori, $scm_path));
+    rename("$cache.$rand", "$cache");
+
+    sendfile($cache);
+}
+
 function returnCachedIndex($dir) {
     $cache = "_cache/" . str_replace("/", ",.,.", trim(trim($dir, '/') . '/index.md', '/'));
     $ori = "_doc/$dir";
@@ -293,6 +339,8 @@ if ($mode == 'view') {
         sendfile(fixName("_doc/$file"), 'text');
     } else if (is_file("_doc/$file.md")) {
         returnCachedFile("$file.md");
+    } else if (is_file("_doc/$file/config.md")) {
+        returnMergedFile("$file");
     } else if (is_dir("_doc/$file")) {
         if ($file[strlen($file)-1] != '/') {
             header("Location: /$file/", true, 302);
