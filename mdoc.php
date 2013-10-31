@@ -267,8 +267,6 @@ function returnMergedFile($scm_path) {
     $cache = "_cache/" . str_replace("/", ",.,.", trim($scm_path, '/'));
     $ori = "_doc/$scm_path/config.md";
 
-    echo generateMergedFile($ori, $scm_path); exit();
-
     $rand = rand();
     file_put_contents("$cache.$rand", generateMergedFile($ori, $scm_path));
     rename("$cache.$rand", "$cache");
