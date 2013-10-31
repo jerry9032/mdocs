@@ -102,7 +102,8 @@
     $(".btn-edit")
       .click(function () {
         sec_id = $(this).parent().attr("id");
-        sec_url = $("[href=#"+sec_id+"]").attr("file");
+        sec_url = $("[href=#"+sec_id+"]").attr("file")
+          + "&source=" + window.location.pathname.replace(/^\/*|\/*$/g, "");
         window.location = sec_url;
       })
 })

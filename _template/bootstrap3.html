@@ -44,12 +44,11 @@
     <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
       <ul class="nav navbar-nav">
         <li class="dropdown">
-          <a data-toggle="dropdown" href="#">常用文档<b class="caret" style="color: #777; border-top-color: #777; border-bottom-color: #777;"></b></a>
+          <a data-toggle="dropdown" href="#">相关文档<b class="caret" style="color: #777; border-top-color: #777; border-bottom-color: #777;"></b></a>
           <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-            <li><a href="#">Redis</a></li>
-            <li><a href="#">ODP</a></li>
-            <li class="divider"></li>
-            <li><a href="#">Confilter</a></li>
+            {foreach $relate as $title => $url}
+            <li><a href="{$url}">{$title}</a></li>
+            {/foreach}
           </ul>
         </li>
         <li>
@@ -90,7 +89,7 @@
                 {foreach $sub_array as $sub_title => $sub_file}
                   {$j=$j+1}
                   <li>
-                    <a href="#{$i}_{$j}" file="/{$source_link}/{$file}{$edit_link}">{$sub_title}</a>
+                    <a href="#{$i}_{$j}" file="/{$source_link}/{$sub_file}{$edit_link}">{$sub_title}</a>
                   </li>
                 {/foreach}
               </ul>
