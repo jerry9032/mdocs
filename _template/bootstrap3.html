@@ -14,6 +14,7 @@
 <!-- Documentation extras -->
 <link href="/_static/bootstrap3/css/docs.css" rel="stylesheet">
 <link href="/_static/bootstrap3/css/github.css" rel="stylesheet">
+<link href="/_static/autosuggest/autosuggest.css" rel="stylesheet">
 <style>
 
 </style>
@@ -54,11 +55,8 @@
         <li>
           <a href="#">如何编辑</a>
         </li>
-        <li class="navbar-right search" style="width: 200px">
-          <div class="input-group" style="width: 150px">  
-            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>  
-            <input type="text" class="form-control" placeholder="模块名">
-          </div>
+        <li class="navbar-right search">
+          <input type="text" id="scm_path" class="form-control col-md-4" placeholder="模块名">
         </li>
       </ul>
     </nav>
@@ -144,18 +142,10 @@
 <footer class="bs-footer" role="contentinfo">
   <div class="container">
 
-    <p>Designed and built with all the love in the world by <a href="http://twitter.com/mdo" target="_blank">@mdo</a> and <a href="http://twitter.com/fat" target="_blank">@fat</a>.</p>
-    <p>Code licensed under <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache License v2.0</a>, documentation under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
+    <p>Web UI is designed and built by <a href="http://getbootstrap.com/" target="_blank">Bootstrap 3.0</a>.</p>
     <ul class="footer-links">
-      <li>当前版本： v3.0.0</li>
+      <li>Manual contributed by <a href="ksarch@baidu.com">ksarch@baidu.com</a></li>
       <li class="muted">·</li>
-      <li><a href="http://v2.bootcss.com/">Bootstrap 2.3.2 文档</a></li>
-      <li class="muted">·</li>
-      <li><a href="http://blog.getbootstrap.com">Blog</a></li>
-      <li class="muted">·</li>
-      <li><a href="https://github.com/twbs/bootstrap/issues?state=open">Issues</a></li>
-      <li class="muted">·</li>
-      <li><a href="https://github.com/twbs/bootstrap/releases">Releases</a></li>
     </ul>
   </div>
 </footer>
@@ -171,6 +161,7 @@
 <script src="/_static/bootstrap3/js/holder.js"></script>
 <script src="/_static/bootstrap3/js/highlight.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
+<script src="/_static/autosuggest/autosuggest.js"></script>
 <script src="/_static/bootstrap3/js/application.js"></script>
 
 

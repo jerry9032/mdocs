@@ -105,7 +105,18 @@
         sec_url = $("[href=#"+sec_id+"]").attr("file")
           + "&source=" + window.location.pathname.replace(/^\/*|\/*$/g, "");
         window.location = sec_url;
-      })
+      });
+
+    var options = {
+      script:   "/utils/suggestion.php?json=true&",
+      varname:  "input",
+      json:     true,
+      callback: function (obj) {
+        window.location = "/" + obj.value;
+      }
+    };
+    var svn_sug = new AutoSuggest('scm_path', options);
+
 })
 
 }(window.jQuery)
