@@ -265,9 +265,7 @@ function returnMergedFile($scm_path) {
     global $mdoc_config;
 
     $cache = "_cache/" . str_replace("/", ",.,.", trim($scm_path, '/'));
-    $ori = "_doc/$scm_path/config.md";
-
-    echo generateMergedFile($ori, $scm_path); exit();
+    $ori = "_doc/$scm_path/meta.md";
 
     $rand = rand();
     file_put_contents("$cache.$rand", generateMergedFile($ori, $scm_path));
@@ -339,7 +337,7 @@ if ($mode == 'view') {
         sendfile(fixName("_doc/$file"), 'text');
     } else if (is_file("_doc/$file.md")) {
         returnCachedFile("$file.md");
-    } else if (is_file("_doc/$file/config.md")) {
+    } else if (is_file("_doc/$file/meta.md")) {
         returnMergedFile("$file");
     } else if (is_dir("_doc/$file")) {
         if ($file[strlen($file)-1] != '/') {
