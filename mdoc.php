@@ -310,6 +310,10 @@ function fixName($file) {
     return str_replace('/.md', '/index.md', $file);
 }
 
+function fixLeadingDir($file) {
+    return preg_replace('/^man\//i', '', $file);
+}
+
 loadPlugins();
 
 $file = $_GET['path'];
@@ -335,10 +339,10 @@ if ($mode == 'view') {
         sendfile("_doc/$file", 'text');
     } else if (is_file(fixName("_doc/$file"))) {
         sendfile(fixName("_doc/$file"), 'text');
+    } else if (is_file("_doc/$file/meta.md")) {
+        returnMergedFile(fixLeadingDir($file));
     } else if (is_file("_doc/$file.md")) {
         returnCachedFile("$file.md");
-    } else if (is_file("_doc/$file/meta.md")) {
-        returnMergedFile("$file");
     } else if (is_dir("_doc/$file")) {
         if ($file[strlen($file)-1] != '/') {
             header("Location: /$file/", true, 302);
