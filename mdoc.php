@@ -231,7 +231,7 @@ function returnCachedFile($file) {
     sendfile($cache);
 }
 
-// input config.php merge files
+// input meta.md merge files
 function generateMergedFile($module_config_file, $scm_path) {
     global $mdoc_config;
 
@@ -261,11 +261,11 @@ function generateMergedFile($module_config_file, $scm_path) {
     return $generated;
 }
 
-function returnMergedFile($scm_path) {
+function returnMergedFile($file_path, $scm_path) {
     global $mdoc_config;
 
     $cache = "_cache/" . str_replace("/", ",.,.", trim($scm_path, '/'));
-    $ori = "_doc/$scm_path/meta.md";
+    $ori = "_doc/$file_path/meta.md";
 
     $rand = rand();
     file_put_contents("$cache.$rand", generateMergedFile($ori, $scm_path));
@@ -340,7 +340,7 @@ if ($mode == 'view') {
     } else if (is_file(fixName("_doc/$file"))) {
         sendfile(fixName("_doc/$file"), 'text');
     } else if (is_file("_doc/$file/meta.md")) {
-        returnMergedFile(fixLeadingDir($file));
+        returnMergedFile($file, fixLeadingDir($file));
     } else if (is_file("_doc/$file.md")) {
         returnCachedFile("$file.md");
     } else if (is_dir("_doc/$file")) {
