@@ -13,6 +13,15 @@
     <script src="/_static/js-markdown-extra.js"></script>
     <script src="/_static/epiceditor/js/epiceditor.js"></script>
     <script type="text/javascript">
+      (function($){
+        $.getUrlParam = function(name) {
+          var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+          var r = window.location.search.substr(1).match(reg);
+          if (r!=null) return unescape(r[2]); return null; 
+        }
+      })(jQuery);
+    </script>
+    <script type="text/javascript">
       var editor = null;
       var data = '';
       var saved = false;
@@ -44,7 +53,10 @@
               }).done(function(data) {
                 if (data == "1") {
                   saved = true;
-                  document.location = document.location.origin + document.location.pathname;
+                  if ($.getUrlParam('source') == null)
+                    document.location = document.location.origin + document.location.pathname;
+                  else
+                    document.location = document.location.origin + "/" + $.getUrlParam('source');
                 } else {
                   alert(data);
                 }
