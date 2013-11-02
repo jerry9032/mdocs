@@ -66,7 +66,12 @@
 <div class="bs-header" id="content">
   <div class="container">
     <h1>{$info.module}</h1>
-    <p>{$info.intro}</p>
+    <p>
+      {$info.intro}
+      <a type="button" class="btn btn-default btn-xs" role="button" href="/{$source_link}/meta{$edit_link}">
+        <span class="glyphicon glyphicon-edit"></span> 编辑
+      </a>
+    </p>
   </div>
 </div>
 

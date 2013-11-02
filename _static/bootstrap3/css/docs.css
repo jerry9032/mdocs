@@ -42,6 +42,7 @@
 body {
   position: relative; /* For scrollyspy */
   padding-top: 50px; /* Account for fixed navbar */
+  font-family: "Helvetica Neue", Helvetica, "微软雅黑", Arial, sans-serif !important;
 }
 
 /* Keep code small in tables on account of limited space */
@@ -516,11 +517,11 @@ p {
 /* Nav: second level (shown on .active) */
 .bs-sidebar .nav .nav {
   display: none; /* Hide by default, but at >768px, show it */
-  margin-bottom: 8px;
+  /*margin-bottom: 8px;*/
 }
 .bs-sidebar .nav .nav > li > a {
-  padding-top:    3px;
-  padding-bottom: 3px;
+  padding-top:    5px;
+  padding-bottom: 5px;
   padding-left: 30px;
   font-size: 95%;
 }
