@@ -68,7 +68,7 @@
     <h1>{$info.module}</h1>
     <p>
       {$info.intro}
-      <a type="button" class="btn btn-default btn-xs" role="button" href="/{$source_link}/meta{$edit_link}">
+      <a type="button" class="btn btn-default btn-xs" role="button" href="/{$source_link}/meta{$edit_link}&source={$source_link}">
         <span class="glyphicon glyphicon-edit"></span> 编辑
       </a>
     </p>
@@ -81,24 +81,20 @@
       <div class="bs-sidebar hidden-print" role="complementary">
         <ul class="nav bs-sidenav">
 
-          {$i=0}
           {foreach $nav as $title => $sub_array}
-            {$i=$i+1}
             <li>
             {if is_array($sub_array)}
-              <a href="#{$i}">{$title}</a>
+            <a href="#{$title|strip:""}">{$title}</a>
               <ul class="nav">
-                {$j=0}
                 {foreach $sub_array as $sub_title => $sub_file}
-                  {$j=$j+1}
                   <li>
-                    <a href="#{$i}_{$j}" file="/{$source_link}/{$sub_file}{$edit_link}">{$sub_title}</a>
+                    <a href="#{$sub_title|strip:""}" file="/{$source_link}/{$sub_file}{$edit_link}">{$sub_title}</a>
                   </li>
                 {/foreach}
               </ul>
             {else}
               {$file=$sub_array}
-              <a href="#{$i}" file="/{$source_link}/{$file}{$edit_link}">{$title}</a>
+              <a href="#{$title|strip:""}" file="/{$source_link}/{$file}{$edit_link}">{$title}</a>
             {/if}
             </li>
           {/foreach}
@@ -107,18 +103,14 @@
     </div>
     <div class="col-md-9" role="main">
       
-    {$i=0}
     {foreach $contents as $title => $sub_array}
-      {$i=$i+1}
       <div class="bs-docs-section">
       {if is_array($sub_array)}
         <div class="page-header">
-          <h1 id="{$i}">{$title}</h1>
+          <h1 id="{$title|strip:""}">{$title}</h1>
         </div>
-        {$j=0}
         {foreach $sub_array as $sub_title => $sub_body}
-          {$j=$j+1}
-          <h2 id="{$i}_{$j}">{$sub_title}
+          <h2 id="{$sub_title|strip:""}">{$sub_title}
             <a class="btn btn-edit btn-primary pull-right">
               <span class="glyphicon glyphicon-edit"></span> 编辑本段
             </a>
@@ -127,7 +119,7 @@
         {/foreach}
       {else}
         <div class="page-header">
-          <h1 id="{$i}">{$title}
+          <h1 id="{$title|strip:""}">{$title}
             <a class="btn btn-edit btn-primary pull-right">
               <span class="glyphicon glyphicon-edit"></span> 编辑本段
             </a>

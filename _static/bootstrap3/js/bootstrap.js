@@ -1639,7 +1639,8 @@ if (typeof jQuery === "undefined") { throw new Error("Bootstrap requires jQuery"
       .map(function () {
         var $el   = $(this)
         var href  = $el.data('target') || $el.attr('href')
-        var $href = /^#\w/.test(href) && $(href)
+        // var $href = /^#\w/.test(href) && $(href)
+        var $href = /^#[\u4e00-\u9fa5\w]/.test(href) && $(href)   //hack for chinese
 
         return ($href
           && $href.length
