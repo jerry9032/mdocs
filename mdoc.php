@@ -201,7 +201,8 @@ function sendfile($file, $type = "http") {
     if ($type == 'text') {
         header("Content-Type: text/plain; charset=utf-8");
     }
-    header("X-Sendfile: ".dirname(__FILE__)."/$file");
+    #header("X-Sendfile: ".dirname(__FILE__)."/$file");
+    header("X-Accel-Redirect: /$file");
 }
 
 function returnCachedFile($file) {
@@ -265,12 +266,22 @@ function returnMergedFile($file_path, $scm_path) {
     global $mdoc_config;
 
     $cache = "_cache/" . str_replace("/", ",.,.", trim($scm_path, '/'));
-    $ori = "_doc/$file_path/meta.md";
+    $config_file = "_doc/$file_path/meta.md";
 
-    $rand = rand();
-    file_put_contents("$cache.$rand", generateMergedFile($ori, $scm_path));
-    rename("$cache.$rand", "$cache");
-
+    $need_build = true;
+    if (file_exists($cache)) {
+      $config = include $config_file;
+      $oristat = _stat_get_latest_mtime("_doc/$file_path", $config["nav"]);
+      $cachestat = stat($cache);
+      if ($oristat['mtime'] < $cachestat['mtime']) {
+        $need_build = false;
+      }
+    }
+    if ($need_build) {
+      $rand = rand();
+      file_put_contents("$cache.$rand", generateMergedFile($config_file, $scm_path));
+      rename("$cache.$rand", "$cache");
+    }
     sendfile($cache);
 }
 
