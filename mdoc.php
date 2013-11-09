@@ -200,16 +200,22 @@ function generateIndex($linkdir) {
 function sendfile($file, $type = "http") {
     if ($type == 'text') {
         header("Content-Type: text/plain; charset=utf-8");
+    } elseif ($type == 'http') {
+        header("Content-Type: text/html");
     }
-    #header("X-Sendfile: ".dirname(__FILE__)."/$file");
-    header("X-Accel-Redirect: /$file");
+    global $mdoc_config;
+    if ($mdoc_config['webserver'] == 'nginx') {
+        header("X-Accel-Redirect: /$file");
+    } else {
+        header("X-Sendfile: ".dirname(__FILE__)."/$file");
+    }
 }
 
 function returnCachedFile($file) {
     global $mdoc_config;
 
     $cache = "_cache/" . str_replace("/", ",.,.", trim($file, '/'));
-    $ori = "_doc/$file";
+    $ori = "_doc/$file.md";
     $need_build = true;
     if (isset($mdoc_config['disable_cache']) && $mdoc_config['disable_cache']) {
         $need_build = true;
@@ -353,14 +359,14 @@ if ($mode == 'view') {
     } else if (is_file("_doc/$file/meta.md")) {
         returnMergedFile($file, fixLeadingDir($file));
     } else if (is_file("_doc/$file.md")) {
-        returnCachedFile("$file.md");
+        returnCachedFile($file);
     } else if (is_dir("_doc/$file")) {
         if ($file[strlen($file)-1] != '/') {
             header("Location: /$file/", true, 302);
             exit;
         }
         if (is_file("_doc/$file/index.md")) {
-            returnCachedFile("$file/index.md");
+            returnCachedFile(trim($file,"/") . "/index");
         } else {
             returnCachedIndex($file);
         }
