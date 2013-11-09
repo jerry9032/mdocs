@@ -279,7 +279,8 @@ function returnMergedFile($file_path, $scm_path) {
       $config = include $config_file;
       $oristat = _stat_get_latest_mtime("_doc/$file_path", $config["nav"]);
       $cachestat = stat($cache);
-      if ($oristat['mtime'] < $cachestat['mtime']) {
+      $configstat = stat($config_file);
+      if (max($oristat['mtime'], $configstat['mtime']) < $cachestat['mtime']) {
         $need_build = false;
       }
     }
