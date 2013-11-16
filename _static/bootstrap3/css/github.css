@@ -18,6 +18,16 @@ pre .javadoc {
   font-style: italic
 }
 
+pre .brainfuck .comment {
+  color: #334;
+  font-style: normal !important;
+}
+
+pre .avrasm .label {
+  color: black !important;
+  font-weight: normal;
+}
+
 pre .keyword,
 pre .css .rule .keyword,
 pre .winutils,
