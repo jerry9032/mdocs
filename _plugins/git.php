@@ -14,6 +14,12 @@ function _git_after_save_edit($file) {
     if (trim(shell_exec("cd _doc && $git status --porcelain $f | wc -l")) === "0") {
         return;
     }
+    if (function_exists('_identify_get_user')) {
+        $user = _identify_get_user();
+        $git_comment = "$user modify file $file";
+    } else {
+        $git_comment = "Modify file $file";
+    }
     #exec("cd _doc \\
     #   && $git checkout -B tmpbranch \\
     #   && $git add $f \\
@@ -31,7 +37,7 @@ function _git_after_save_edit($file) {
     exec("cd _doc \\
        && $git checkout -B tmpbranch \\
        && $git add $f \\
-       && $git commit -m 'Modify file '$file \\
+       && $git commit -m '$git_comment' \\
        && $git checkout master \\
        && $git fetch \\
        && $git merge tmpbranch \\
