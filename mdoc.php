@@ -203,11 +203,13 @@ function sendfile($file, $type = "http") {
     } elseif ($type == 'http') {
         header("Content-Type: text/html");
     }
-    global $mdoc_config;
-    if ($mdoc_config['webserver'] == 'nginx') {
+    $server = $_SERVER['SERVER_SOFTWARE'];
+    if (strpos($server, 'nginx') !== false) {
         header("X-Accel-Redirect: /$file");
-    } else {
+    } else if (strpos($server, 'lighttpd') !== false) {
         header("X-Sendfile: ".dirname(__FILE__)."/$file");
+    } else {
+        header("Status: 403 Forbidden");
     }
 }
 
