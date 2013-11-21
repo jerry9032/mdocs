@@ -140,7 +140,9 @@ p {
 .bs-docs-section > p {
   text-indent: 2em;
 }
-
+img {
+  max-width: 800px !important;
+}
 
 /*
  * Footer
@@ -539,6 +541,8 @@ p {
   .bs-sidebar.affix {
     position: fixed; /* Undo the static from mobile first approach */
     top: 80px;
+    bottom: 0px;
+    overflow: auto;
   }
   .bs-sidebar.affix-bottom {
     position: absolute; /* Undo the static from mobile first approach */
