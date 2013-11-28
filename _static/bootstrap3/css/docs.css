@@ -137,6 +137,9 @@ body {
 p {
   line-height: 2em;
 }
+p.last-update {
+	font-size: 14px;
+}
 .bs-docs-section > p {
   text-indent: 2em;
 }
