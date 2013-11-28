@@ -108,8 +108,8 @@
       });
 
     var options = {
-      script:   "/utils/suggestion.php?json=true&",
-      varname:  "input",
+      script:   "/special:find?ajax=1&",
+      varname:  "q",
       json:     true,
       callback: function (obj) {
         window.location = "/" + obj.value;
