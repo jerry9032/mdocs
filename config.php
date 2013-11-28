@@ -2,8 +2,8 @@
 return array(
     'site_name' => 'ksarch',
     'short_name' => 'ksarch',
-    'plugins' => array('identify', 'git', 'search', 'specials', 'filestat'),
-    #    'disable_cache' => true,
+	'plugins' => array('identify', 'git', 'search', 'find', 'specials', 'filestat'),
+    #'disable_cache' => true,
     'vhost' => array(
         'man.baidu.com' => array(
             'doc_root'   => '_doc/man',

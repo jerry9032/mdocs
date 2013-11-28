@@ -67,9 +67,26 @@ function register_special($method, $cb, $description = NULL) {
 // end support for special page
 
 $mdoc_config = include(dirname(__FILE__) . '/config.php');
-loadConfig();
 
-function loadConfig() {
+// vhost support
+$pos = strpos($_SERVER['HTTP_HOST'], ":");
+if ($pos === false) {
+    $host = $_SERVER['HTTP_HOST'];
+} else {
+    $host = substr($_SERVER['HTTP_HOST'], 0, $pos);
+}
+$host_config = $mdoc_config['vhost'][$host];
+if ( isset($host_config) ) {
+    $doc_root   = $host_config['doc_root'];
+    $cache_root = $host_config['cache_root'];
+} else {
+    header('Status: 500 Internal Error');
+}
+// end support for vhost
+
+loadConfig($doc_root);
+
+function loadConfig($doc_root) {
     global $mdoc_config;
     $default_config = array(
         'site_name' => 'Mdoc documentation',
@@ -81,8 +98,7 @@ function loadConfig() {
     $mdoc_config = array_merge($default_config, $mdoc_config);
 
     $file = $_GET['path'];
-    $dir_parts = explode('/', $file);
-    $prefix = '_doc/';
+    $dir_parts = explode('/', "$doc_root/$file");
     foreach ($dir_parts as $part) {
         $prefix .= $part . '/';
         $path = $prefix . 'config.php';
@@ -209,15 +225,15 @@ function sendfile($file, $type = "http") {
     } else if (strpos($server, 'lighttpd') !== false) {
         header("X-Sendfile: ".dirname(__FILE__)."/$file");
     } else {
-        header("Status: 403 Forbidden");
+        header("Status: 500 Internal Error");
     }
 }
 
-function returnCachedFile($file) {
+function returnCachedFile($doc_root, $cache_root, $file) {
     global $mdoc_config;
 
-    $cache = "_cache/" . str_replace("/", ",.,.", trim($file, '/'));
-    $ori = "_doc/$file.md";
+    $cache = "$cache_root/" . str_replace("/", ",.,.", trim($file, '/'));
+    $ori = "$doc_root/$file.md";
     $need_build = true;
     if (isset($mdoc_config['disable_cache']) && $mdoc_config['disable_cache']) {
         $need_build = true;
@@ -270,16 +286,16 @@ function generateMergedFile($module_config_file, $scm_path) {
     return $generated;
 }
 
-function returnMergedFile($file_path, $scm_path) {
+function returnMergedFile($doc_root, $cache_root, $scm_path) {
     global $mdoc_config;
 
-    $cache = "_cache/" . str_replace("/", ",.,.", trim($scm_path, '/'));
-    $config_file = "_doc/$file_path/meta.md";
+    $cache = "$cache_root/" . str_replace("/", ",.,.", trim($scm_path, '/'));
+    $config_file = "$doc_root/$scm_path/meta.md";
 
     $need_build = true;
     if (file_exists($cache)) {
       $config = include $config_file;
-      $oristat = _stat_get_latest_mtime("_doc/$file_path", $config["nav"]);
+      $oristat = _stat_get_latest_mtime("$doc_root/$scm_path", $config["nav"]);
       $cachestat = stat($cache);
       $configstat = stat($config_file);
       if (max($oristat['mtime'], $configstat['mtime']) < $cachestat['mtime']) {
@@ -330,19 +346,19 @@ function fixName($file) {
     return str_replace('/.md', '/index.md', $file);
 }
 
-function fixLeadingDir($file) {
-    return preg_replace('/^man\//i', '', $file);
-}
-
 loadPlugins();
 
 $file = $_GET['path'];
+var_dump($file);
+// special page support
 if (strpos($file, "special:") === 0) {
     // use special page
     $method = substr($file, strlen("special:"));
     invoke_special($method);
     exit();
 }
+
+// page mode
 if ($_GET['post'] == 1) {
     $mode = 'post';
 } else if ($_GET['edit'] == 1) {
@@ -355,21 +371,21 @@ if ($mode == 'view') {
     if (!action_hook('before view', $file)) {
         exit(1);
     }
-    if (is_file("_doc/$file")) {
-        sendfile("_doc/$file", 'text');
-    } else if (is_file(fixName("_doc/$file"))) {
-        sendfile(fixName("_doc/$file"), 'text');
-    } else if (is_file("_doc/$file/meta.md")) {
-        returnMergedFile($file, fixLeadingDir($file));
-    } else if (is_file("_doc/$file.md")) {
-        returnCachedFile($file);
-    } else if (is_dir("_doc/$file")) {
+    if (is_file("$doc_root/$file")) {
+        sendfile("$doc_root/$file", 'text');
+    } else if (is_file(fixName("$doc_root/$file"))) {
+        sendfile(fixName("$doc_root/$file"), 'text');
+    } else if (is_file("$doc_root/$file/meta.md")) {
+        returnMergedFile($doc_root, $cache_root, $file);
+    } else if (is_file("$doc_root/$file.md")) {
+        returnCachedFile($doc_root, $cache_root, $file);
+    } else if (is_dir("$doc_root/$file")) {
         if ($file[strlen($file)-1] != '/') {
             header("Location: /$file/", true, 302);
             exit;
         }
-        if (is_file("_doc/$file/index.md")) {
-            returnCachedFile(trim($file,"/") . "/index");
+        if (is_file("$doc_root/$file/index.md")) {
+            returnCachedFile($doc_root, $cache_root, trim($file,"/") . "/index");
         } else {
             returnCachedIndex($file);
         }
@@ -396,7 +412,7 @@ if ($mode == 'view') {
         echo 'content empty!';
         exit();
     }
-    $filename = fixName("_doc/$file.md");
+    $filename = fixName("$doc_root/$file.md");
     $dirname = dirname($filename);
     if (!is_dir($dirname)) {
         mkdir($dirname, 0755, true);
