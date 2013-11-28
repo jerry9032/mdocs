@@ -35,13 +35,10 @@ function _git_after_save_edit($file) {
     #   && $git push origin master
     #   ", $output, $retcode);
     exec("cd _doc \\
-       && $git checkout -B tmpbranch \\
+       && $git checkout master \\
+       && $git pull origin master \\
        && $git add $f \\
        && $git commit -m '$git_comment' \\
-       && $git checkout master \\
-       && $git fetch \\
-       && $git merge tmpbranch \\
-       && $git branch -d tmpbranch \\
        && $git push origin master
        ", $output, $retcode);
     if ($retcode != 0) {
