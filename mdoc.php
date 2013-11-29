@@ -1,6 +1,5 @@
 <?php
 require_once(dirname(__FILE__) . '/lib/mymarkdown.php');
-require_once(dirname(__FILE__) . '/lib/manmarkdown.php');
 require_once(dirname(__FILE__) . '/lib/Spyc.php');
 
 // support for hooks
@@ -260,7 +259,7 @@ function returnCachedFile($doc_root, $cache_root, $file) {
 function generateMergedFile($module_config_file, $scm_path) {
     global $mdoc_config;
 
-    $parser = new ManMarkdown();
+    $parser = new MyMarkdown();
     $module_config = include $module_config_file;
     foreach ($module_config["nav"] as $title => $file) {
         if ( is_array($file) ) {
