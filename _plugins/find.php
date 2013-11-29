@@ -7,7 +7,7 @@ function _find_special() {
 
 	$q = escapeshellarg($_GET['q']);
 	$q = strtolower($q);
-	$ret = exec("cd _doc/man > /dev/null && find . -name meta.md | grep $q | sort", $output, $return_code);
+	$ret = exec("cd _doc/man > /dev/null && find . -name meta.md | grep $q | sort | head -n 20", $output, $return_code);
 
 	if ($return_code != 0) {
 		var_dump($return_code);

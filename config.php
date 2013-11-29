@@ -2,7 +2,7 @@
 return array(
     'site_name' => 'ksarch',
     'short_name' => 'ksarch',
-	'plugins' => array('identify', 'git', 'search', 'find', 'specials', 'filestat'),
+	'plugins' => array('identify', 'git', 'search', 'find', '404', 'specials', 'filestat'),
     #'disable_cache' => true,
     'vhost' => array(
         'man.baidu.com' => array(
