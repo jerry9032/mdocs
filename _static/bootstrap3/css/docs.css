@@ -146,6 +146,9 @@ p.last-update {
 img {
   max-width: 800px !important;
 }
+.wsd {
+  text-align: center;
+}
 
 /*
  * Footer
