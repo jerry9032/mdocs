@@ -280,7 +280,7 @@ function generateMergedFile($module_config_file, $scm_path) {
     $data = array_merge($mdoc_config, $module_config, array(
         "source_link" => $scm_path,
         "contents" => $contents,
-        "last_update" => gmdate("dS F, Y, l")
+        "last_update" => date("dS F, Y, l")
     ));
     $generated = applyTemplate($module_config['layout'], $data);
     return $generated;
