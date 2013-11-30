@@ -11,7 +11,7 @@ function _git_create_edit_file($file, $method) {
     $retcode = 0;
     $output = array();
     $f = escapeshellarg($file);
-    if (trim(shell_exec("cd _doc && $git status --porcelain $f | wc -l")) === "0") {
+    if (trim(shell_exec("cd _doc && $git status --porcelain $f | wc -l")) === "0" && $method == "modify") {
         return;
     }
     if (function_exists('_identify_get_user')) {

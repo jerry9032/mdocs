@@ -39,7 +39,7 @@ function _create_do_special() {
 		return;
 	}
 	if (function_exists("_git_create"))
-		_git_create($scm_path);
+		_git_create("$doc_root/$scm_path");
 	else {
 		echo "add git repo failed.";
 		return ;
