@@ -1,6 +1,6 @@
 <?php
 $_git_flock_fp = NULL;
-function _git_after_save_edit($file) {
+function _git_create_edit_file($file, $method) {
     global $_git_flock_fp;
     $git = "~/.jumbo/bin/git";
     if (!is_dir('_doc/.git')) {
@@ -16,9 +16,9 @@ function _git_after_save_edit($file) {
     }
     if (function_exists('_identify_get_user')) {
         $user = _identify_get_user();
-        $git_comment = "$user modify file $file";
+        $git_comment = "$user $method $file";
     } else {
-        $git_comment = "Modify file $file";
+        $git_comment = "$method $file";
     }
     #exec("cd _doc \\
     #   && $git checkout -B tmpbranch \\
@@ -50,6 +50,14 @@ function _git_after_save_edit($file) {
         return ACTION_ABORT;
     }
     flock($_git_flock_fp, LOCK_UN);
+}
+
+function _git_after_save_edit($file) {
+    _git_create_edit_file($file, "modify");
+}
+
+function _git_create($file) {
+    _git_create_edit_file($file, "create");
 }
 
 function _git_before_save_edit() {
