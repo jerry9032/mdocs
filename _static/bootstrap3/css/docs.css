@@ -117,9 +117,6 @@ body {
   background-color: #463265;
   border-color: #463265;
 }
-.navbar-nav {
-  width: 85%;
-}
 .navbar-inverse .navbar-nav>.open>a {
   color: #fff;
   background-color: #463265 !important;
