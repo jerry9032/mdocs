@@ -256,7 +256,7 @@ function returnCachedFile($doc_root, $cache_root, $file) {
 }
 
 // input meta.md merge files
-function generateMergedFile($module_config_file, $scm_path) {
+function generateMergedFile($module_config_file, $scm_path, $last_update) {
     global $mdoc_config;
 
     $parser = new MyMarkdown();
@@ -280,7 +280,7 @@ function generateMergedFile($module_config_file, $scm_path) {
     $data = array_merge($mdoc_config, $module_config, array(
         "source_link" => $scm_path,
         "contents" => $contents,
-        "last_update" => date("dS F, Y, l")
+        "last_update" => date("dS F, Y, l", $last_update)
     ));
     $generated = applyTemplate($module_config['layout'], $data);
     return $generated;
@@ -292,19 +292,22 @@ function returnMergedFile($doc_root, $cache_root, $scm_path) {
     $cache = "$cache_root/" . str_replace("/", ",.,.", trim($scm_path, '/'));
     $config_file = "$doc_root/$scm_path/meta.md";
 
+    // scan files to calculate last update time
+    $config = include $config_file;
+    $oristat = _stat_get_latest_mtime("$doc_root/$scm_path", $config["nav"]);
+    $configstat = stat($config_file);
+    $last_update = max($oristat['mtime'], $configstat['mtime']);
+
     $need_build = true;
     if (file_exists($cache)) {
-      $config = include $config_file;
-      $oristat = _stat_get_latest_mtime("$doc_root/$scm_path", $config["nav"]);
       $cachestat = stat($cache);
-      $configstat = stat($config_file);
-      if (max($oristat['mtime'], $configstat['mtime']) < $cachestat['mtime']) {
+      if ($last_update <= $cachestat['mtime']) {
         $need_build = false;
       }
     }
     if ($need_build) {
       $rand = rand();
-      file_put_contents("$cache.$rand", generateMergedFile($config_file, $scm_path));
+      file_put_contents("$cache.$rand", generateMergedFile($config_file, $scm_path, $last_update));
       rename("$cache.$rand", "$cache");
     }
     sendfile($cache);
