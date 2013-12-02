@@ -83,8 +83,19 @@ function _git_sync() {
     exec("cd _doc && $git fetch");
 }
 
+function _git_pull() {
+    // webhook for gitlab
+    $git = "~/.jumbo/bin/git";
+    if (!is_dir('_doc/.git')) {
+        return;
+    }
+    exec("cd _doc && $git pull");
+}
+
 add_action('after_save_edit', '_git_after_save_edit');
 add_action('before_save_edit', '_git_before_save_edit');
 add_action('before_view', '_git_sync');
 add_action('before_edit', '_git_sync');
 add_action('before_commit', '_git_sync');
+
+register_special('git_pull', '_git_pull');

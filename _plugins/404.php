@@ -31,6 +31,7 @@ function _create_do_special() {
 	if ($return_code == 0) {
 		// meta.md already exist
 		header("Location: /$scm_path");
+		exit();
 	}
 	$ret = exec("cd $doc_root > /dev/null && mkdir -p '$scm_path' && cp meta-sample.md '$scm_path/meta.md'", $output, $return_code);
 
