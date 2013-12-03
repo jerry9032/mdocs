@@ -140,12 +140,17 @@ p.last-update {
 .bs-docs-section > p {
   text-indent: 2em;
 }
+.bs-docs-section > ul > li {
+  padding-bottom: 8px;
+  line-height: 2em;
+}
 img {
   max-width: 800px !important;
 }
 .wsd {
   text-align: center;
 }
+
 
 /*
  * Footer
