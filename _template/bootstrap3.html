@@ -82,17 +82,17 @@
           {foreach $nav as $title => $sub_array}
             <li>
             {if is_array($sub_array)}
-              <a href='#{$title|regex_replace:"/[\s\(\)\:]/":""}'>{$title}</a>
+              <a href='#{$title|regex_replace:"/[\s\(\)\:]/":""|regex_replace:"/\./":"_"}'>{$title}</a>
               <ul class="nav">
                 {foreach $sub_array as $sub_title => $sub_file}
                   <li>
-                    <a href='#{$title|regex_replace:"/[\s\(\)\:]/":""}_{$sub_title|regex_replace:"/[\s\(\)\:]/":""}' file="/{$source_link}/{$sub_file}{$edit_link}">{$sub_title}</a>
+                    <a href='#{$title|regex_replace:"/[\s\(\)\:]/":""|regex_replace:"/\./":"_"}_{$sub_title|regex_replace:"/[\s\(\)\:]/":""|regex_replace:"/\./":"_"}' file="/{$source_link}/{$sub_file}{$edit_link}">{$sub_title}</a>
                   </li>
                 {/foreach}
               </ul>
             {else}
               {$file=$sub_array}
-              <a href='#{$title|regex_replace:"/[\s\(\)\:]/":""}' file="/{$source_link}/{$file}{$edit_link}">{$title}</a>
+              <a href='#{$title|regex_replace:"/[\s\(\)\:]/":""|regex_replace:"/\./":"_"}' file="/{$source_link}/{$file}{$edit_link}">{$title}</a>
             {/if}
             </li>
           {/foreach}
@@ -105,10 +105,10 @@
       <div class="bs-docs-section">
       {if is_array($sub_array)}
         <div class="page-header">
-          <h1 id='{$title|regex_replace:"/[\s\(\)\:]/":""}'>{$title}</h1>
+          <h1 id='{$title|regex_replace:"/[\s\(\)\:]/":""|regex_replace:"/\./":"_"}'>{$title}</h1>
         </div>
         {foreach $sub_array as $sub_title => $sub_body}
-          <h2 id='{$title|regex_replace:"/[\s\(\)\:]/":""}_{$sub_title|regex_replace:"/[\s\(\)\:]/":""}'>{$sub_title}
+          <h2 id='{$title|regex_replace:"/[\s\(\)\:]/":""|regex_replace:"/\./":"_"}_{$sub_title|regex_replace:"/[\s\(\)\:]/":""|regex_replace:"/\./":"_"}'>{$sub_title}
             <a class="btn btn-edit btn-primary pull-right">
               <span class="glyphicon glyphicon-edit"></span> 编辑本段
             </a>
@@ -117,7 +117,7 @@
         {/foreach}
       {else}
         <div class="page-header">
-          <h1 id='{$title|regex_replace:"/[\s\(\)\:]/":""}'>{$title}
+          <h1 id='{$title|regex_replace:"/[\s\(\)\:]/":""|regex_replace:"/\./":"_"}'>{$title}
             <a class="btn btn-edit btn-primary pull-right">
               <span class="glyphicon glyphicon-edit"></span> 编辑本段
             </a>
