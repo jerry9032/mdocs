@@ -66,7 +66,7 @@
     <h1>{$info.module}</h1>
     <p>
       {$info.intro}
-      <a type="button" class="btn btn-default btn-xs" role="button" href="/{$source_link}/meta{$edit_link}&source={$source_link}">
+      <a type="button" class="btn btn-default btn-xs" role="button" href="/{$source_link}meta{$edit_link}&source={$source_link}">
         <span class="glyphicon glyphicon-edit"></span> 编辑
       </a>
     </p>
@@ -87,13 +87,13 @@
               <ul class="nav">
                 {foreach $sub_array as $sub_title => $sub_file}
                   <li>
-                    <a href='#{$title|regex_replace:"/[\s\(\)\:]/":""|regex_replace:"/\./":"_"}_{$sub_title|regex_replace:"/[\s\(\)\:]/":""|regex_replace:"/\./":"_"}' file="/{$source_link}/{$sub_file}{$edit_link}">{$sub_title}</a>
+                    <a href='#{$title|regex_replace:"/[\s\(\)\:]/":""|regex_replace:"/\./":"_"}_{$sub_title|regex_replace:"/[\s\(\)\:]/":""|regex_replace:"/\./":"_"}' file="/{$source_link}{$sub_file}{$edit_link}">{$sub_title}</a>
                   </li>
                 {/foreach}
               </ul>
             {else}
               {$file=$sub_array}
-              <a href='#{$title|regex_replace:"/[\s\(\)\:]/":""|regex_replace:"/\./":"_"}' file="/{$source_link}/{$file}{$edit_link}">{$title}</a>
+              <a href='#{$title|regex_replace:"/[\s\(\)\:]/":""|regex_replace:"/\./":"_"}' file="/{$source_link}{$file}{$edit_link}">{$title}</a>
             {/if}
             </li>
           {/foreach}
