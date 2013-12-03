@@ -12,7 +12,7 @@
 <link href="/_static/bootstrap3/css/bootstrap.min.css" rel="stylesheet">
 
 <!-- Documentation extras -->
-<link href="/_static/christmas/css/docs.css" rel="stylesheet">
+<link href="/_static/bootstrap3/css/docs.css" rel="stylesheet">
 <link href="/_static/bootstrap3/css/github.css" rel="stylesheet">
 <link href="/_static/autosuggest/autosuggest.css" rel="stylesheet">
 <style>

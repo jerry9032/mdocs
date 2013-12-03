@@ -9,11 +9,11 @@
 <title>{$info.module} | 百度手册</title>
 
 <!-- Bootstrap core CSS -->
-<link href="/_static/christmas/css/bootstrap.min.css" rel="stylesheet">
+<link href="/_static/bootstrap3/css/bootstrap.min.css" rel="stylesheet">
 
 <!-- Documentation extras -->
-<link href="/_static/christmas/css/docs.css" rel="stylesheet">
-<link href="/_static/christmas/css/github.css" rel="stylesheet">
+<link href="/_static/bootstrap3/css/docs.css" rel="stylesheet">
+<link href="/_static/bootstrap3/css/github.css" rel="stylesheet">
 <link href="/_static/autosuggest/autosuggest.css" rel="stylesheet">
 <style>
 
@@ -62,7 +62,6 @@
 
 <div class="bs-header" id="content">
   <div class="container">
-    <img src="/_static/christmas/banner-hat.png" style="position:absolute;left:-35px;top:-15px;"/>
     <h1>{$info.module}</h1>
     <p>
       {$info.intro}
@@ -110,7 +109,7 @@
         </div>
         {foreach $sub_array as $sub_title => $sub_body}
           <h2 id='{$title|regex_replace:"/[\s\(\)\:]/":""|regex_replace:"/\./":"_"}_{$sub_title|regex_replace:"/[\s\(\)\:]/":""|regex_replace:"/\./":"_"}'>{$sub_title}
-            <a class="btn btn-edit btn-danger pull-right">
+            <a class="btn btn-edit btn-primary pull-right">
               <span class="glyphicon glyphicon-edit"></span> 编辑本段
             </a>
           </h2>
@@ -119,7 +118,7 @@
       {else}
         <div class="page-header">
           <h1 id='{$title|regex_replace:"/[\s\(\)\:]/":""|regex_replace:"/\./":"_"}'>{$title}
-            <a class="btn btn-edit btn-danger pull-right">
+            <a class="btn btn-edit btn-primary pull-right">
               <span class="glyphicon glyphicon-edit"></span> 编辑本段
             </a>
           </h1> 
