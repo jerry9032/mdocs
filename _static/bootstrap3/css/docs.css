@@ -544,7 +544,6 @@ img {
   .bs-sidebar.affix {
     position: fixed; /* Undo the static from mobile first approach */
     top: 80px;
-    bottom: 0px;
     overflow: auto;
   }
   .bs-sidebar.affix-bottom {

@@ -56,7 +56,7 @@
                   if ($.getUrlParam('source') == null)
                     document.location = document.location.origin + document.location.pathname;
                   else
-                    document.location = document.location.origin + "/" + $.getUrlParam('source');
+                    document.location = document.location.origin + "/" + $.getUrlParam('source') + "/";
                 } else {
                   alert(data);
                 }
