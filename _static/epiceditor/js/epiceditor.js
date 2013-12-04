@@ -412,11 +412,13 @@
       , nativeFs = document.body.webkitRequestFullScreen ? true : false
       , _goFullscreen
       , _exitFullscreen
+      , _insertHtmlAtCaret
       , elementsToResize
       , fsElement
       , isMod = false
       , isCtrl = false
       , eventableIframes
+      , TAB_CHARACTER = '&#09;'
       , i; // i is reused for loops
 
     callback = callback || function () {};
@@ -675,6 +677,42 @@
       resetWidth(elementsToResize);
     };
 
+   _insertHtmlAtCaret = function (html) {
+      var doc = self.editorIframe.contentDocument;
+      var sel, range;
+      if (doc.getSelection) {
+        // IE9 and non-IE
+        sel = doc.getSelection();
+        console.log(sel);
+        if (sel.getRangeAt && sel.rangeCount) {
+          range = sel.getRangeAt(0);
+          range.deleteContents();
+
+          // Range.createContextualFragment() would be useful here but is
+          // non-standard and not supported in all browsers (IE9, for one)
+          var el = document.createElement("div");
+          el.innerHTML = html;
+          var frag = document.createDocumentFragment(), node, lastNode;
+          while ((node = el.firstChild)) {
+            lastNode = frag.appendChild(node);
+          }
+          range.insertNode(frag);
+
+          // Preserve the selection
+          if (lastNode) {
+            range = range.cloneRange();
+            range.setStartAfter(lastNode);
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+          }
+        }
+      } else if (doc.selection && doc.selection.type != "Control") {
+        // IE < 9
+        doc.selection.createRange().pasteHTML(html);
+      }
+    };
+
     // This setups up live previews by triggering preview() IF in fullscreen on keyup
     self.editor.addEventListener('keyup', function () {
       if (keypressTimer) {
@@ -796,6 +834,13 @@
       if (e.metaKey && e.keyCode == 83) {
         self.save();
         e.preventDefault();
+      }
+
+
+      // Respect TAB and insert TAB character &#09;
+      if (!isMod && e.keyCode == 9) {
+        e.preventDefault();
+        _insertHtmlAtCaret(TAB_CHARACTER);
       }
 
     }
