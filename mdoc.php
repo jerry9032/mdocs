@@ -1,6 +1,5 @@
 <?php
-require_once(dirname(__FILE__) . '/lib/mymarkdown.php');
-require_once(dirname(__FILE__) . '/lib/Spyc.php');
+require_once(dirname(__FILE__) . '/lib/markdown-geshi.php');
 
 // support for hooks
 $_action_callbacks = array();
@@ -83,9 +82,9 @@ if ( isset($host_config) ) {
 }
 // end support for vhost
 
-loadConfig($doc_root);
+loadConfig();
 
-function loadConfig($doc_root) {
+function loadConfig() {
     global $mdoc_config;
     $default_config = array(
         'site_name' => 'Mdoc documentation',
@@ -95,16 +94,6 @@ function loadConfig($doc_root) {
         'plugins' => array(),
     );
     $mdoc_config = array_merge($default_config, $mdoc_config);
-
-    $file = $_GET['path'];
-    $dir_parts = explode('/', "$doc_root/$file");
-    foreach ($dir_parts as $part) {
-        $prefix .= $part . '/';
-        $path = $prefix . 'config.php';
-        if (file_exists($path)) {
-            $mdoc_config = array_merge($mdoc_config, include($path));
-        }
-    }
 }
 
 function loadPlugins() {
@@ -114,14 +103,11 @@ function loadPlugins() {
     }
 }
 
-function parseMarkdown($md, $title = null) {
-    $parser = new MyMarkdown();
-    if (!empty($title)) {
-        $parser->set_title($title);
-    }
-    $html = $parser->transform($md);
-    $toc = $parser->getToc();
-    return array('html' => $html, 'toc' => $toc);
+$parser = new MarkdownGeshi_Parser();
+
+function parseMarkdown($md) {
+    global $parser;
+    return $parser->transform($md);
 }
 
 function applyTemplate($template, $data) {
@@ -149,67 +135,16 @@ function generate($contents, $data) {
     global $mdoc_config;
     $arr = explode("\n---\n", $contents, 2);
     if (count($arr) < 2) {
-        return false;
+        $md = $content;
+    } else {
+        $yaml = $arr[0];
+        $md = $arr[1];
     }
-    $yaml = $arr[0];
-    $md = $arr[1];
-    $yaml = spyc_load($yaml);
-    $result = parseMarkdown($md, $yaml['title']);
 
-    $data = $yaml;
-
-    $data['content'] = $result['html'];
-    $data['toc'] = $result['toc'];
-
+    $data['content'] = parseMarkdown($md);
     $data = array_merge($mdoc_config, $data);
-
     $generated = applyTemplate($data['layout'], $data);
     return $generated;
-}
-
-function sort_cb($a, $b) {
-    return $b['mtime'] - $a['mtime'];
-}
-function generateIndex($linkdir) {
-    global $mdoc_config;
-    var_dump($linkdir);
-    $linkdir = trim($linkdir, '/');
-    $dir = "_doc/$linkdir";
-    $dirlist = scandir($dir);
-    $files = array();
-    foreach ($dirlist as $f) {
-        if (!is_file("$dir/$f")) continue;
-        if (strpos($f, '.md') !== strlen($f) - 3) continue;
-        $stat = stat("$dir/$f");
-        $contents = file_get_contents("$dir/$f");
-        $arr = explode("\n---\n", $contents, 2);
-        if (count($arr) < 2) {
-            continue;
-        }
-        $yaml = $arr[0];
-        $yaml = spyc_load($yaml);
-        $name = substr($f, 0, strlen($f) - 3);
-        $entry = array(
-            'name' => $name,
-            'author' => $yaml['author'],
-            'title' => $yaml['title'],
-            'mtime' => $stat['mtime'],
-        );
-        $files[] = $entry;
-    }
-    usort($files, 'sort_cb');
-
-    //generate md from dirlist
-    $md = "title: $linkdir 目录\n---\n## 文章列表\n";
-    if (!empty($linkdir)) {
-        $linkdir = '/' . $linkdir;
-    }
-    foreach ($files as $f) {
-        $md .= "* [{$f['title']}]($linkdir/{$f['name']}) _last updated by **{$f['author']}** on ".strftime("%Y-%m-%d %H:%M",$f['mtime'])."_\n";
-    }
-    
-    //generate page
-    return generate($md, array('source_link' => '#'));
 }
 
 function sendfile($file, $type = "http") {
@@ -259,7 +194,6 @@ function returnCachedFile($doc_root, $cache_root, $file) {
 function generateMergedFile($module_config_file, $scm_path, $last_update) {
     global $mdoc_config;
 
-    $parser = new MyMarkdown();
     $module_config = include $module_config_file;
     foreach ($module_config["nav"] as $title => $file) {
         if ( is_array($file) ) {
@@ -267,14 +201,18 @@ function generateMergedFile($module_config_file, $scm_path, $last_update) {
             foreach ($sub_array as $sub_title => $sub_file) {
                 $ctx = file_get_contents(dirname($module_config_file)."/".$sub_file.".md");
                 $arr = explode("\n---\n", $ctx, 2);
-                $md = $arr[1];
-                $contents[$title][$sub_title] = $parser->transform($md);
+                if (count($arr) < 2) {
+                    $md = $ctx;
+                } else {
+                    $md = $arr[1];
+                }
+                $contents[$title][$sub_title] = parseMarkdown($md);
             }
         } else {
             $ctx = file_get_contents(dirname($module_config_file)."/".$file.".md");
             $arr = explode("\n---\n", $ctx, 2);
             $md = $arr[1];
-            $contents[$title] = $parser->transform($md);
+            $contents[$title] = parseMarkdown($md);
         }
     }
     $data = array_merge($mdoc_config, $module_config, array(
@@ -309,38 +247,6 @@ function returnMergedFile($doc_root, $cache_root, $scm_path) {
       $rand = rand();
       file_put_contents("$cache.$rand", generateMergedFile($config_file, $scm_path, $last_update));
       rename("$cache.$rand", "$cache");
-    }
-    sendfile($cache);
-}
-
-function returnCachedIndex($dir) {
-    $cache = "_cache/" . str_replace("/", ",.,.", trim(trim($dir, '/') . '/index.md', '/'));
-    $ori = "_doc/$dir";
-    $need_build = true;
-    if (file_exists($cache)) {
-        $oristat = stat($ori);
-        $cachestat = stat($cache);
-        if ($oristat['mtime'] < $cachestat['mtime']) {
-            $need_build = false;
-            foreach (scandir($ori) as $f) {
-                if (!is_file("$ori/$f")) continue;
-                if (strpos($f, '.md') !== strlen($f) - 3) continue;
-                $stat = stat("$ori/$f");
-                if ($stat['mtime'] > $cachestat['mtime']) {
-                    $need_build = true;
-                    break;
-                }
-            }
-        }
-    }
-    if ($need_build) {
-        $rand = rand();
-        if (!is_dir(dirname($cache))) {
-            mkdir(dirname($cache), 0755, true);
-        }
-        $data = array('source_link' => $file);
-        file_put_contents("$cache.$rand", generateIndex($dir));
-        rename("$cache.$rand", "$cache");
     }
     sendfile($cache);
 }
@@ -382,16 +288,6 @@ if ($mode == 'view') {
         returnMergedFile($doc_root, $cache_root, $file);
     } else if (is_file("$doc_root/$file.md")) {
         returnCachedFile($doc_root, $cache_root, $file);
-    } else if (is_dir("$doc_root/$file")) {
-        if ($file[strlen($file)-1] != '/') {
-            header("Location: /$file/", true, 302);
-            exit;
-        }
-        if (is_file("$doc_root/$file/index.md")) {
-            returnCachedFile($doc_root, $cache_root, trim($file,"/") . "/index");
-        } else {
-            returnCachedIndex($file);
-        }
     } else {
         header("Status: 404 Not found");
         exit;
