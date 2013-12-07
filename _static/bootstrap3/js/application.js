@@ -117,7 +117,8 @@
     };
     var svn_sug = new AutoSuggest('scm_path', options);
 
-	$('table').addClass('table').addClass('table-striped table-bordered');
+    $('table').addClass('table').addClass('table-striped table-bordered');
+    $('blockquote').addClass('bs-callout bs-callout-warning');
 
 })
 
