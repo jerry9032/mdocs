@@ -150,6 +150,12 @@ img {
 .wsd {
   text-align: center;
 }
+.bs-docs-section > ul > li {
+  line-height: 2em;
+}
+.bs-docs-section > ol > li {
+  line-height: 2em;
+}
 
 
 /*
@@ -609,7 +615,12 @@ h3 {
 }
 .bs-callout h4 {
   margin-top: 0;
-  margin-bottom: 5px;
+  margin-bottom: 15px;
+}
+.bs-callout p {
+  font-size: 14px;
+  line-height: 2em;
+  margin: 0;
 }
 .bs-callout p:last-child {
   margin-bottom: 0;
@@ -624,11 +635,11 @@ h3 {
   color: #b94a48;
 }
 .bs-callout-warning {
-  background-color: #faf8f0;
-  border-color: #faebcc;
+  background-color: #FFF8D3;
+  border-color: #EBC372;
 }
 .bs-callout-warning h4 {
-  color: #c09853;
+  color: #DF9619;
 }
 .bs-callout-info {
   background-color: #f4f8fa;

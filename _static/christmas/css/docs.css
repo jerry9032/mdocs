@@ -69,7 +69,7 @@ body {
 .btn-outline-inverse {
   color: #fff;
   background-color: transparent;
-  border-color: #cdbfe3;
+  border-color: #e3bfc0;
 }
 .btn-outline-inverse:hover,
 .btn-outline-inverse:focus,
@@ -94,7 +94,7 @@ body {
   box-shadow: 0 1px 0 rgba(255,255,255,.1);
 }
 .bs-docs-nav .navbar-collapse {
-  border-color: #463265;
+  border-color: #7C3D3D;
 }
 .bs-docs-nav .navbar-brand {
   color: #fff;
@@ -111,11 +111,11 @@ body {
   background-color: #463265;
 }
 .bs-docs-nav .navbar-toggle {
-  border-color: #563d7c;
+  border-color: #7C3D3D;
 }
 .bs-docs-nav .navbar-toggle:hover {
-  background-color: #463265;
-  border-color: #463265;
+  background-color: #862626;
+  border-color: #993B3B;
 }
 .navbar-inverse .navbar-nav>.open>a {
   color: #fff;
@@ -154,6 +154,12 @@ img {
 }
 .wsd {
   text-align: center;
+}
+.bs-docs-section > ul > li {
+  line-height: 2em;
+}
+.bs-docs-section > ol > li {
+  line-height: 2em;
 }
 
 /*
@@ -247,7 +253,16 @@ img {
   background-image: url(/_static/christmas/index-bg.jpg);
   background-repeat: no-repeat;
   background-color: rgb(113,21,10);
-  background-position: 180px 0px;
+}
+@media (max-width:1440px) {
+  .bs-docs-home {
+    background-position: 180px 0px;
+  }
+}
+@media (min-width: 1440px) {
+  .bs-docs-home {
+    background-position: 100% 0px;
+  }
 }
 .bs-header {
   color: #F6C9C9;
@@ -511,21 +526,21 @@ img {
   padding-top:    10px;
   padding-bottom: 10px;
   text-shadow: 0 1px 0 #fff;
-  background-color: #f7f5fa;
+  background-color: #faf5f5;
   border-radius: 5px;
 }
 
 /* All levels of nav */
 .bs-sidebar .nav > li > a {
   display: block;
-  color: #716b7a;
+  color: #7A5151;
   padding: 5px 20px;
 }
 .bs-sidebar .nav > li > a:hover,
 .bs-sidebar .nav > li > a:focus {
   text-decoration: none;
-  background-color: #e5e3e9;
-  border-right: 1px solid #dbd8e0;
+  background-color: #F5E1E1;
+  border-right: 1px solid #C2343F;
 }
 .bs-sidebar .nav > .active > a,
 .bs-sidebar .nav > .active:hover > a,
@@ -621,7 +636,15 @@ h3 {
 }
 .bs-callout h4 {
   margin-top: 0;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
+}
+.bs-callout ul, .bs-callout ol {
+  margin-bottom: 0;
+}
+.bs-callout p {
+  font-size : 14px;
+  line-height : 2em;
+  margin: 0;
 }
 .bs-callout p:last-child {
   margin-bottom: 0;
@@ -636,11 +659,11 @@ h3 {
   color: #b94a48;
 }
 .bs-callout-warning {
-  background-color: #faf8f0;
-  border-color: #faebcc;
+  background-color: #FFF8D3;
+  border-color: #EBC372;
 }
 .bs-callout-warning h4 {
-  color: #c09853;
+  color: #DF9619;
 }
 .bs-callout-info {
   background-color: #f4f8fa;
