@@ -11,7 +11,7 @@
     <script src="/_static/js-yaml.js"></script>
     <script src="/_static/jquery-1.8.3.js"></script>
     <script src="/_static/js-markdown-extra.js"></script>
-    <script src="/_static/epiceditor/js/epiceditor.js"></script>
+    <script src="/_static/epiceditor/js/epiceditor.js?v=20131209"></script>
     <script type="text/javascript">
       (function($){
         $.getUrlParam = function(name) {
@@ -25,13 +25,16 @@
       var editor = null;
       var data = '';
       var saved = false;
+      var parseMdFake = function(data) {
+        return '';
+      }
       var parseMd = function(data) {
-        var sepIndex = data.indexOf('---');
+        var sepIndex = data.indexOf('\n---\n');
         if (sepIndex < 0) {
-          return '';
+          return '<div class="body">'+Markdown(data)+'</div>';
         }
         var yaml = jsyaml.load(data.substr(0, sepIndex));
-        return '<div class="body"><h1>'+yaml.title+'</h1>'+Markdown(data.substr(sepIndex+3)) + '</div>';
+        return '<div class="body"><h1>'+yaml.title+'</h1>'+Markdown(data.substr(sepIndex+5)) + '</div>';
       }
       var setcontent = function(data) {
         var opt = {
@@ -40,7 +43,7 @@
           basePath: '/_static/epiceditor',
           clientSideStorage: false,
           file: {defaultContent: data},
-          parser: parseMd,
+          parser: parseMdFake,
           userButton: {
             visible: true,
             callback: function() {
@@ -53,10 +56,12 @@
               }).done(function(data) {
                 if (data == "1") {
                   saved = true;
-                  if ($.getUrlParam('source') == null)
+                  source = $.getUrlParam('source');
+                  //anchor = $.getUrlParam('anchor');alert(anchor);
+                  if (source == null)
                     document.location = document.location.origin + document.location.pathname;
                   else
-                    document.location = document.location.origin + "/" + $.getUrlParam('source');
+                    document.location = document.location.origin + "/" + source;
                 } else {
                   alert(data);
                 }
