@@ -1,4 +1,5 @@
 <?php
+require_once(dirname(__FILE__) . '/lib/Spyc.php');
 require_once(dirname(__FILE__) . '/lib/markdown-geshi.php');
 
 // support for hooks
@@ -138,6 +139,8 @@ function generate($contents, $data) {
         $md = $content;
     } else {
         $yaml = $arr[0];
+        $yaml = spyc_load($yaml);
+        $data['layout'] = $yaml['layout'];
         $md = $arr[1];
     }
 
@@ -166,6 +169,7 @@ function sendfile($file, $type = "http") {
 function returnCachedFile($doc_root, $cache_root, $file) {
     global $mdoc_config;
 
+    $file = str_replace("//", "/", $file);
     $cache = "$cache_root/" . str_replace("/", ",.,.", trim($file, '/'));
     $ori = "$doc_root/$file.md";
     $need_build = true;
@@ -211,7 +215,11 @@ function generateMergedFile($module_config_file, $scm_path, $last_update) {
         } else {
             $ctx = file_get_contents(dirname($module_config_file)."/".$file.".md");
             $arr = explode("\n---\n", $ctx, 2);
-            $md = $arr[1];
+            if (count($arr) < 2) {
+                $md = $ctx;
+            } else {
+                $md = $arr[1];
+            }
             $contents[$title] = parseMarkdown($md);
         }
     }
