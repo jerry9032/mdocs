@@ -162,4 +162,20 @@
 <script src="/_static/bootstrap3/js/application.js"></script>
 
 
+{if $extensions.mathjax eq 'on'}
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\[","\\]"] ],
+      processEscapes: true
+    }
+  });
+  $('.math').each(function(){
+    html = $(this).html();
+    para = $(this).parent().wrap('<p></p>').parent();
+    para.html(html);
+  });
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+{/if}
 </body></html>
