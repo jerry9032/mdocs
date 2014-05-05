@@ -195,7 +195,7 @@ function returnCachedFile($doc_root, $cache_root, $file) {
 }
 
 // input meta.md merge files
-function generateMergedFile($module_config_file, $scm_path, $last_update) {
+function generateMergedFile($module_config_file, $scm_path, $last_update, $layout = null) {
     global $mdoc_config;
 
     $module_config = include $module_config_file;
@@ -228,11 +228,12 @@ function generateMergedFile($module_config_file, $scm_path, $last_update) {
         "contents" => $contents,
         "last_update" => date("dS F, Y, l", $last_update)
     ));
-    $generated = applyTemplate($module_config['layout'], $data);
+    $layout = isset($layout) ? $layout : $module_config['layout'];
+    $generated = applyTemplate($layout, $data);
     return $generated;
 }
 
-function returnMergedFile($doc_root, $cache_root, $scm_path) {
+function returnMergedFile($doc_root, $cache_root, $scm_path, $layout = null) {
     global $mdoc_config;
 
     $cache = "$cache_root/" . str_replace("/", ",.,.", trim($scm_path, '/'));
@@ -253,7 +254,7 @@ function returnMergedFile($doc_root, $cache_root, $scm_path) {
     }
     if ($need_build) {
       $rand = rand();
-      file_put_contents("$cache.$rand", generateMergedFile($config_file, $scm_path, $last_update));
+      file_put_contents("$cache.$rand", generateMergedFile($config_file, $scm_path, $last_update, $layout));
       rename("$cache.$rand", "$cache");
     }
     sendfile($cache);

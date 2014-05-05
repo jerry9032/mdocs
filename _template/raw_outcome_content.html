@@ -1,0 +1,17 @@
+{foreach $contents as $title => $sub_array}
+  {$title_strip=$title|regex_replace:"/[\s\(\)\:]/":""|regex_replace:"/\./":"_"}
+  <div class="doc-section">
+  {if is_array($sub_array)}
+    <h1 class="doc-title" id='{$title_strip}'>{$title}</h1>
+    {foreach $sub_array as $sub_title => $sub_body}
+      {$sub_title_strip=$sub_title|regex_replace:"/[\s\(\)\:]/":""|regex_replace:"/\./":"_"}
+      <h2 class="doc-title" id='{$title_strip}_{$sub_title_strip}'>{$sub_title}</h2>
+      {$sub_body}
+    {/foreach}
+  {else}
+    <h1 class="doc-title" id='{$title_strip}'>{$title}</h1>
+    {$body=$sub_array}
+    {$body}
+  {/if}
+  </div>
+{/foreach}

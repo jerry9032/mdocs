@@ -1,0 +1,21 @@
+<ul class="nav doc-sidenav">
+{foreach $nav as $title => $sub_array}
+  {$title_strip=$title|regex_replace:"/[\s\(\)\:]/":""|regex_replace:"/\./":"_"}
+  <li>
+  {if is_array($sub_array)}
+    <a href='#{$title_strip}'>{$title}</a>
+    <ul class="nav">
+      {foreach $sub_array as $sub_title => $sub_file}
+        {$sub_title_strip=$sub_title|regex_replace:"/[\s\(\)\:]/":""|regex_replace:"/\./":"_"}
+        <li>
+          <a href='#{$title_strip}_{$sub_title_strip}' file="/{$source_link}{$sub_file}">{$sub_title}</a>
+        </li>
+      {/foreach}
+      </ul>
+  {else}
+    {$file=$sub_array}
+    <a href='#{$title_strip}' file="/{$source_link}{$file}">{$title}</a>
+  {/if}
+  </li>
+{/foreach}
+</ul>
